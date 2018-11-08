@@ -1,0 +1,16 @@
+version: 2.1
+
+executors:
+  shellcheck:
+    docker:
+      - image: nlknguyen/alpine-shellcheck:v0.4.6
+
+jobs:
+  check:
+    description: Run shellcheck over any shell scripts in the respository.
+    executor: shellcheck
+    steps:
+      - checkout
+      - run:
+          name: Check Scripts
+          command: git ls-files "*.sh" | xargs shellcheck --external-sources
