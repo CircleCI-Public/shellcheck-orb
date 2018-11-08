@@ -13,4 +13,4 @@ jobs:
       - checkout
       - run:
           name: Check Scripts
-          command: git ls-files "*.sh" | xargs shellcheck --external-sources
+          command: find . -type f -name '*.sh'  | xargs shellcheck --external-sources
