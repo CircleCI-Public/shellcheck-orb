@@ -1,16 +1,25 @@
 version: 2.1
 
-executors:
-  shellcheck:
-    docker:
-      - image: nlknguyen/alpine-shellcheck:v0.4.6
+description: |
+  ShellCheck, a static analysis tool for shell scripts https://www.shellcheck.net
+  Check all scripts in your repository using `shellcheck` on every commit.
 
 jobs:
   check:
-    description: Run shellcheck over any shell scripts in the respository.
+    description: |
+      Run shellcheck over any shell scripts in the respository.
+      Add this job to any workflow to automatically check any shell scripts
+      in your repository.
     executor: shellcheck
     steps:
       - checkout
       - run:
           name: Check Scripts
           command: find . -type f -name '*.sh'  | xargs shellcheck --external-sources
+
+executors:
+  shellcheck:
+    description: |
+      This is a docker image that contains the `shellcheck` binary.
+    docker:
+      - image: nlknguyen/alpine-shellcheck:v0.4.6
