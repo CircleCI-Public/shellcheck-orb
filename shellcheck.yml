@@ -10,12 +10,21 @@ jobs:
       Run shellcheck over any shell scripts in the respository.
       Add this job to any workflow to automatically check any shell scripts
       in your repository.
+    parameters:
+      path:
+        type: string
+        default: .
+        description: The top-most directory to search for files in.
+      pattern:
+        type: string
+        default: "*.sh"
+        description: The file pattern as passed to `find` to locate shell scripts.
     executor: shellcheck
     steps:
       - checkout
       - run:
           name: Check Scripts
-          command: find . -type f -name '*.sh'  | xargs shellcheck --external-sources
+          command: find '<< parameters.path >>' -type f -name '<< parameters.pattern >>' | tee /dev/tty | xargs shellcheck --external-sources
 
 executors:
   shellcheck:
