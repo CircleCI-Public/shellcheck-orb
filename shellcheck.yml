@@ -11,6 +11,10 @@ jobs:
       Add this job to any workflow to automatically check any shell scripts
       in your repository.
     parameters:
+      exclude:
+        type: string
+        default: ""
+        description: This file pattern is used to compare paths to exclude when searching for files.
       path:
         type: string
         default: .
@@ -24,7 +28,7 @@ jobs:
       - checkout
       - run:
           name: Check Scripts
-          command: find '<< parameters.path >>' -type f -name '<< parameters.pattern >>' | tee /dev/tty | xargs shellcheck --external-sources
+          command: find '<< parameters.path >>' -not -path '<< parameters.exclude >>' -type f -name '<< parameters.pattern >>' | tee /dev/tty | xargs shellcheck --external-sources
 
 executors:
   shellcheck:
