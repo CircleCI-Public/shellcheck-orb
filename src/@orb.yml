@@ -28,6 +28,22 @@ examples:
           jobs:
             - shellcheck/check
 
+  exclude-path:
+    description: |
+      Exclude subdirectory 'foo' and its contents
+
+    usage:
+      version: 2.1
+
+      orbs:
+        shellcheck: circleci/shellcheck@1.0.0
+
+      workflows:
+        shellcheck:
+          jobs:
+            - shellcheck/check:
+                exclude: './foo/*'
+
   custom-executor:
     description: |
       Use custom executor
@@ -61,8 +77,9 @@ jobs:
         type: string
         default: ""
         description: |
-          This file pattern is used to compare paths to exclude when searching
-          for files.
+          This file pattern (as passed to `find -not -path`) is used to select
+          a path to exclude when searching for files. Currently, this is
+          limited to a single pattern.
       path:
         type: string
         default: .
