@@ -1,0 +1,16 @@
+---
+version: 2.1
+
+jobs:
+  validate:
+    docker:
+      - image: circleci/circleci-cli:alpine
+    steps:
+      - checkout
+      - run: circleci orb validate shellcheck.yml
+
+workflows:
+  version: 2
+  validate:
+    jobs:
+      - validate
