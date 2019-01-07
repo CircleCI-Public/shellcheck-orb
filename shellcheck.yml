@@ -1,8 +1,46 @@
+---
 version: 2.1
-
 description: |
-  ShellCheck, a static analysis tool for shell scripts https://www.shellcheck.net
-  Check all scripts in your repository using `shellcheck` on every commit.
+  ShellCheck, a static analysis tool for shell scripts
+  https://www.shellcheck.net Check all scripts in your repository using
+  `shellcheck` on every commit.
+
+examples:
+  shellcheck-workflow:
+    description: |
+      Checkout and run shellcheck against all files with the extension .sh
+
+    usage:
+      version: 2.1
+
+      orbs:
+        shellcheck: circleci/shellcheck@1.2.0
+
+      workflows:
+        shellcheck:
+          jobs:
+            - shellcheck/check
+
+  custom-executor:
+    description: |
+      Use custom executor
+
+    usage:
+      version: 2.1
+
+      orbs:
+        shellcheck: circleci/shellcheck@1.2.0
+
+      executors:
+        my-custom-executor:
+          docker:
+            - image: nlknguyen/alpine-shellcheck:v0.4.6
+
+      workflows:
+        shellcheck:
+          jobs:
+            - shellcheck/check:
+                executor: my-custom-executor
 
 jobs:
   check:
@@ -10,11 +48,14 @@ jobs:
       Run shellcheck over any shell scripts in the respository.
       Add this job to any workflow to automatically check any shell scripts
       in your repository.
+    executor: << parameters.executor >>
     parameters:
       exclude:
         type: string
         default: ""
-        description: This file pattern is used to compare paths to exclude when searching for files.
+        description: |
+          This file pattern is used to compare paths to exclude when searching
+          for files.
       path:
         type: string
         default: .
@@ -22,17 +63,26 @@ jobs:
       pattern:
         type: string
         default: "*.sh"
-        description: The file pattern as passed to `find` to locate shell scripts.
-    executor: shellcheck
+        description: |
+          The file pattern as passed to `find` to locate shell scripts.
+      executor:
+        type: executor
+        default: shellcheck
+        description: |
+          Override executor with a custom executor, for example, to choose a
+          different version tag.
     steps:
       - checkout
       - run:
           name: Check Scripts
-          command: find '<< parameters.path >>' -not -path '<< parameters.exclude >>' -type f -name '<< parameters.pattern >>' | tee /dev/tty | xargs shellcheck --external-sources
+          command: >
+            find '<< parameters.path >>' -not -path '<< parameters.exclude >>'
+            -type f -name '<< parameters.pattern >>' | tee /dev/tty
+            | xargs shellcheck --external-sources
 
 executors:
   shellcheck:
     description: |
       This is a docker image that contains the `shellcheck` binary.
     docker:
-      - image: nlknguyen/alpine-shellcheck:v0.4.6
+      - image: koalaman/shellcheck:v0.6.0
