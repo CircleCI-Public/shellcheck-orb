@@ -1,9 +1,16 @@
----
 version: 2.1
+
 description: |
   ShellCheck, a static analysis tool for shell scripts
-  https://www.shellcheck.net Check all scripts in your repository using
+  https://shellcheck.net Check all scripts in your repository using
   `shellcheck` on every commit.
+
+executors:
+  shellcheck:
+    description: |
+      This is a docker image that contains the `shellcheck` binary.
+    docker:
+      - image: koalaman/shellcheck-alpine:v0.6.0
 
 examples:
   shellcheck-workflow:
@@ -14,7 +21,7 @@ examples:
       version: 2.1
 
       orbs:
-        shellcheck: circleci/shellcheck@1.2.0
+        shellcheck: circleci/shellcheck@1.0.0
 
       workflows:
         shellcheck:
@@ -29,7 +36,7 @@ examples:
       version: 2.1
 
       orbs:
-        shellcheck: circleci/shellcheck@1.2.0
+        shellcheck: circleci/shellcheck@1.0.0
 
       executors:
         my-custom-executor:
@@ -79,10 +86,3 @@ jobs:
             find '<< parameters.path >>' -not -path '<< parameters.exclude >>'
             -type f -name '<< parameters.pattern >>' | tee /dev/tty
             | xargs shellcheck --external-sources
-
-executors:
-  shellcheck:
-    description: |
-      This is a docker image that contains the `shellcheck` binary.
-    docker:
-      - image: koalaman/shellcheck:v0.6.0
