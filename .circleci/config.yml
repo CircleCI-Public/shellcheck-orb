@@ -141,7 +141,7 @@ workflows:
       # triggered by master branch commits
       - shellcheck/check:
           name: shellcheck-check_master
-          pre-steps: *integration-pre-steps
+          pre-steps: *add-ssh-keys
           filters: *integration-master_filters
           post-steps: *cleanup-git-tag
 
