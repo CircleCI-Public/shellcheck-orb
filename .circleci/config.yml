@@ -96,7 +96,7 @@ add-ssh-keys: &add-ssh-keys
   [add_ssh_keys: {fingerprints: ["40:21:b7:d7:fe:ea:dd:80:ca:c8:34:7a:37:b4:b4:d2"]}]
 
 cleanup-git-tag: &cleanup-git-tag
-  [run: {when: "always", name: "cleanup tag", command: "apt install git ssh && git config --global user.email $CIRCLE_USERNAME@users.noreply.github.com && git config --global user.name $CIRCLE_USERNAME && git push --delete origin $CIRCLE_TAG"}]
+  [run: {when: "always", name: "cleanup tag", command: "apk add git openssh && git config --global user.email $CIRCLE_USERNAME@users.noreply.github.com && git config --global user.name $CIRCLE_USERNAME && git push --delete origin $CIRCLE_TAG"}]
 
 workflows:
   validate_dev-deploy:
