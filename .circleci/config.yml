@@ -92,6 +92,12 @@ integration-master_filters: &integration-master_filters
   tags:
     only: /master-.*/
 
+add-ssh-keys: &add-ssh-keys
+  [add_ssh_keys: {fingerprints: ["40:21:b7:d7:fe:ea:dd:80:ca:c8:34:7a:37:b4:b4:d2"]}]
+
+cleanup-git-tag: &cleanup-git-tag
+  [run: {when: "always", name: "cleanup tag", command: "git config --global user.email $CIRCLE_USERNAME@users.noreply.github.com && git config --global user.name $CIRCLE_USERNAME && git push --delete origin $CIRCLE_TAG"}]
+
 workflows:
   validate_dev-deploy:
     jobs:
@@ -128,15 +134,19 @@ workflows:
       # triggered by non-master branch commits
       - shellcheck/check:
           name: shellcheck-check_dev
+          pre-steps: *add-ssh-keys
           filters: *integration-dev_filters
+          post-steps: *cleanup-git-tag
 
       # triggered by master branch commits
       - shellcheck/check:
           name: shellcheck-check_master
+          pre-steps: *integration-pre-steps
           filters: *integration-master_filters
+          post-steps: *cleanup-git-tag
 
       - dev-promote-prod:
           context: orb-publishing
+          filters: *integration-master_filters
           requires:
             - shellcheck-check_master
-          filters: *integration-master_filters
