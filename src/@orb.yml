@@ -22,7 +22,7 @@ examples:
       version: 2.1
 
       orbs:
-        shellcheck: circleci/shellcheck@1.0.0
+        shellcheck: circleci/shellcheck@x.y.z
 
       workflows:
         shellcheck:
@@ -37,7 +37,7 @@ examples:
       version: 2.1
 
       orbs:
-        shellcheck: circleci/shellcheck@1.0.0
+        shellcheck: circleci/shellcheck@x.y.z
 
       workflows:
         shellcheck:
@@ -53,7 +53,7 @@ examples:
       version: 2.1
 
       orbs:
-        shellcheck: circleci/shellcheck@1.0.0
+        shellcheck: circleci/shellcheck@x.y.z
 
       executors:
         my-custom-executor:
