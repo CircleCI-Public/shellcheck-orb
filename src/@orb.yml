@@ -90,6 +90,13 @@ jobs:
         default: "*.sh"
         description: |
           The file pattern as passed to `find` to locate shell scripts.
+      output:
+        type: string
+        default: /dev/tty
+        description: |
+          The destination of the test reports. By default they are sent only
+          to the tty stdout, but the path to a file can be set here to allow
+          them to be saved as job artifacts.
       executor:
         type: executor
         default: shellcheck
@@ -102,5 +109,5 @@ jobs:
           name: Check Scripts
           command: >
             find '<< parameters.path >>' -not -path '<< parameters.exclude >>'
-            -type f -name '<< parameters.pattern >>' | tee /dev/tty
-            | xargs shellcheck --external-sources
+            -type f -name '<< parameters.pattern >>' | tee -a
+            '<< parameters.output >>' | xargs shellcheck --external-sources
