@@ -34,7 +34,7 @@ parameters:
 
   executor:
     type: executor
-    default: shellcheck
+    default: default
     description: |
       Override executor with a custom executor, for example, to choose a
       different version tag.
