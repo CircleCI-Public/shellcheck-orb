@@ -36,6 +36,12 @@ parameters:
     default: orb.yml
     description: Path including the filename to output the packed orb
 
+  debug:
+    type: boolean
+    default: false
+    description: >
+      Extra output for orb developers
+
 steps:
   - build-tools/install-ci-tools
 
@@ -57,12 +63,12 @@ steps:
         i=0
         until [ $i -eq ${#ORBSOURCE[@]} ]; do
           LINE="${ORBSOURCE[$i]}"
+          echo "$LINE"
           if echo "$LINE" | grep "command: |"; then
             script=true; FILE="$i.sh"; j=1; mkdir -p <<parameters.output-dir>>
-
-            SCRIPTLINE="${ORBSOURCE[$i+$j]}"
-
             while "$script"; do
+              SCRIPTLINE="${ORBSOURCE[$i+$j]}"
+
               # if this is true, we are still in the command block
               if [[ ! $(echo "$SCRIPTLINE" | grep -e "name: " \
                 -e "shell: " -e "environment: " -e "background: " \
@@ -70,8 +76,10 @@ steps:
                 -e "when: ") ]]; then
                 echo "$SCRIPTLINE" >> "<<parameters.output-dir>>/$FILE"
                 ((j++))
+                continue
               else
                 script=false
+                i=$(( i + j ))
               fi
             done
 
