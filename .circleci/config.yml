@@ -62,11 +62,13 @@ workflows:
       # triggered by non-master branch commits
       - shellcheck/check:
           name: shellcheck-check_dev
+          extract-inline-scripts: true
           filters: *integration-dev_filters
 
       # triggered by master branch commits
       - shellcheck/check:
           name: shellcheck-check_master
+          extract-inline-scripts: true
           filters: *integration-master_filters
 
       # patch, minor, or major publishing
