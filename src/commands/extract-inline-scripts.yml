@@ -60,7 +60,7 @@ steps:
           if echo "$LINE" | grep "command: |"; then
             script=true; FILE="$i.sh"; j=1; mkdir -p <<parameters.output-dir>>
 
-            SCRIPTLINE="${a[$i+$j]}"
+            SCRIPTLINE="${ORBSOURCE[$i+$j]}"
 
             while "$script"; do
               # if this is true, we are still in the command block
