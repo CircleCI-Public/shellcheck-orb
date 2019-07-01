@@ -1,0 +1,80 @@
+description: >
+  Extract shell script snippets from `run` blocks within the packed
+  source  code (single file) of an orb and store each snippet as a
+  temporary file to be checked by the shellcheck orb. Requires Bash
+  v4.0 or later.
+
+parameters:
+  target-filepath:
+    type: string
+    default: orb.yml
+    description: >
+      Where is the YAML file containing orb source code? Defaults to a
+      file named `orb.yml` in the working directory
+
+  output-dir:
+    type: string
+    default: scripts
+    description: >
+      Where should scripts be outputted? Defaults to a directory named
+      `scripts` (it will be created if it does not exist) in the working
+      directory
+
+  run-pack:
+    type: boolean
+    default: true
+    description: >
+      Pack a destructured orb source directory for this orb command to use?
+
+  pack-source:
+    type: string
+    default: src
+    description: Path to the root folder of an unpacked orb
+
+  pack-destination:
+    type: string
+    default: orb.yml
+    description: Path including the filename to output the packed orb
+
+steps:
+  - when:
+      condition: <<parameters.run-pack>>
+      steps:
+        - orb-tools/pack:
+            source: <<parameters.pack-source>>
+            destination: <<parameters.pack-destination>>
+
+  - run:
+      name: Extract shell scripts
+      command: |
+        readarray ORBSOURCE < <<parameters.target-filepath>>
+
+        i=0
+        until [ $i -eq ${#ORBSOURCE[@]} ]; do
+          LINE="${a[$i]}"
+          if echo "$LINE" | grep "command: |"; then
+            script=true; FILE="$i.sh"; j=1; mkdir -p <<parameters.output-dir>>
+
+            SCRIPTLINE="${a[$i+$j]}"
+
+            while "$script"; do
+              # if this is true, we are still in the command block
+              if [[ ! $(echo "$SCRIPTLINE" | grep -e "name: " \
+                -e "shell: " -e "environment: " -e "background: " \
+                -e "working_directory: " -e "no_output_timeout: " \
+                -e "when: ") ]]; then
+                echo "$SCRIPTLINE" >> "<<parameters.output-dir>>/$FILE"
+                ((j++))
+              else
+                script=false
+              fi
+            done
+
+          else
+            ((i++))
+          fi
+        done
+
+  - store_artifacts:
+      path: <<parameters.output-dir>>
+      destination: scripts

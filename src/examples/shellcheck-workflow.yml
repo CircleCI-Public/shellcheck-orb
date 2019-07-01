@@ -1,0 +1,13 @@
+description: |
+  Checkout and run shellcheck against all files with the extension .sh
+
+usage:
+  version: 2.1
+
+  orbs:
+    shellcheck: circleci/shellcheck@x.y.z
+
+  workflows:
+    shellcheck:
+      jobs:
+        - shellcheck/check

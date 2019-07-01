@@ -1,83 +1,10 @@
 version: 2.1
 
 orbs:
+  orb-tools: circleci/orb-tools@8.27.1
   shellcheck: circleci/shellcheck@dev:alpha
 
-executors:
-  cli:
-    resource_class: small
-    docker:
-      - image: circleci/circleci-cli
-
-  lint:
-    resource_class: small
-    docker:
-      - image: singapore/lint-condo
-
-  github:
-    resource_class: small
-    docker:
-      - image: cibuilds/github
-
 jobs:
-  lint:
-    executor: lint
-    steps:
-      - checkout
-      - run: yamllint .
-
-  validate:
-    executor: cli
-    steps:
-      - checkout
-      - run: circleci orb validate src/@orb.yml
-
-  publish-dev:
-    executor: cli
-    steps:
-      - checkout
-
-      - run:
-          name: publish dev versions
-          command: |
-            # for integration testing
-            circleci orb publish src/@orb.yml circleci/shellcheck@dev:alpha --token $CIRCLE_TOKEN
-
-            # for transparency
-            circleci orb publish src/@orb.yml circleci/shellcheck@dev:$CIRCLE_BRANCH-${CIRCLE_SHA1:0:7} --token $CIRCLE_TOKEN
-
-            # for potentially promoting to prod
-            circleci orb publish src/@orb.yml circleci/shellcheck@dev:${CIRCLE_SHA1:0:7} --token $CIRCLE_TOKEN
-
-  trigger-integration:
-    executor: github
-    parameters:
-      tag:
-        type: enum
-        default: "integration"
-        enum: ["integration", master]
-    steps:
-      - checkout
-
-      - add_ssh_keys:
-          fingerprints:
-            - "40:21:b7:d7:fe:ea:dd:80:ca:c8:34:7a:37:b4:b4:d2"
-
-      - run:
-          name: git config
-          command: |
-            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
-            git config --global user.name "$CIRCLE_USERNAME"
-
-      - run: |
-          INTEGRATION_TAG=<<parameters.tag>>-$CIRCLE_BRANCH-${CIRCLE_SHA1:0:7}
-          git tag $INTEGRATION_TAG
-          git push origin $INTEGRATION_TAG
-
-  dev-promote-prod:
-    executor: cli
-    steps:
-      - run: circleci orb publish promote circleci/shellcheck@dev:${CIRCLE_SHA1:0:7} patch --token $CIRCLE_TOKEN
 
 integration-dev_filters: &integration-dev_filters
   branches:
@@ -98,32 +25,34 @@ cleanup-git-tag: &cleanup-git-tag
   [run: {when: "always", name: "cleanup tag", command: "git config --global user.email $CIRCLE_USERNAME@users.noreply.github.com && git config --global user.name $CIRCLE_USERNAME && git push --delete origin $CIRCLE_TAG"}]
 
 workflows:
-  validate_dev-deploy:
+  lint_pack-validate_publish-dev:
     jobs:
-      - lint
+      - orb-tools/lint
 
-      - validate:
-          requires:
-            - lint
+      - orb-tools/pack:
+          requires: [orb-tools/lint]
 
-      - publish-dev:
-          requires:
-            - validate
+      - orb-tools/publish-dev:
+          orb-name: circleci/shellcheck
           context: orb-publishing
+          requires: [orb-tools/pack]
 
-      - trigger-integration:
+      - orb-tools/trigger-integration-workflow:
           name: trigger-integration-dev
-          requires:
-            - publish-dev
+          context: orb-publishing
+          ssh-fingerprints: 40:21:b7:d7:fe:ea:dd:80:ca:c8:34:7a:37:b4:b4:d2
+          requires: [orb-tools/publish-dev]
           filters:
             branches:
               ignore: master
 
-      - trigger-integration:
+      - orb-tools/trigger-integration-workflow:
           name: trigger-integration-master
+          context: orb-publishing
+          cleanup-tags: true
+          ssh-fingerprints: 40:21:b7:d7:fe:ea:dd:80:ca:c8:34:7a:37:b4:b4:d2
           tag: master
-          requires:
-            - publish-dev
+          requires: [orb-tools/publish-dev]
           filters:
             branches:
               only: master
@@ -133,19 +62,45 @@ workflows:
       # triggered by non-master branch commits
       - shellcheck/check:
           name: shellcheck-check_dev
-          pre-steps: *add-ssh-keys
           filters: *integration-dev_filters
-          post-steps: *cleanup-git-tag
 
       # triggered by master branch commits
       - shellcheck/check:
           name: shellcheck-check_master
-          pre-steps: *add-ssh-keys
           filters: *integration-master_filters
-          post-steps: *cleanup-git-tag
 
-      - dev-promote-prod:
+      # patch, minor, or major publishing
+      - orb-tools/dev-promote-prod:
+          name: dev-promote-patch
           context: orb-publishing
-          filters: *integration-master_filters
-          requires:
-            - shellcheck-check_master
+          orb-name: circleci/shellcheck
+          requires: [shellcheck-check_master]
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-patch.*/
+
+      - orb-tools/dev-promote-prod:
+          name: dev-promote-minor
+          context: orb-publishing
+          orb-name: circleci/shellcheck
+          release: minor
+          requires: [shellcheck-check_master]
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-minor.*/
+
+      - orb-tools/dev-promote-prod:
+          name: dev-promote-major
+          context: orb-publishing
+          orb-name: circleci/shellcheck
+          release: major
+          requires: [shellcheck-check_master]
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-major.*/

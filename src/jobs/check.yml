@@ -1,0 +1,103 @@
+description: |
+  Run shellcheck over any shell scripts in the respository.
+  Add this job to any workflow to automatically check any shell scripts
+  in your repository.
+
+executor: <<parameters.executor>>
+
+parameters:
+  exclude:
+    type: string
+    default: ""
+    description: |
+      This file pattern (as passed to `find -not -path`) is used to select
+      a path to exclude when searching for files. Currently, this is
+      limited to a single pattern.
+
+  path:
+    type: string
+    default: .
+    description: The top-most directory to search for files in.
+
+  pattern:
+    type: string
+    default: "*.sh"
+    description: |
+      The file pattern as passed to `find` to locate shell scripts.
+
+  output:
+    type: string
+    default: shellcheck.log
+    description: |
+      The filename of the shellcheck output, which is automatically saved
+      as a job artifact.
+
+  executor:
+    type: executor
+    default: shellcheck
+    description: |
+      Override executor with a custom executor, for example, to choose a
+      different version tag.
+
+  extract-inline-scripts:
+    type: boolean
+    default: false
+    description: |
+      EXPERIMENTAL! Extract inline scripts from a packed orb source YAML
+      file, store them as files, and check them
+
+  scripts-target-filepath:
+    type: string
+    default: orb.yml
+    description: >
+      Where is the YAML file containing orb source code? Defaults to a
+      file named `orb.yml` in the working directory
+
+  scripts-output-dir:
+    type: string
+    default: scripts
+    description: >
+      Where should scripts be outputted? Defaults to a directory named
+      `scripts` (it will be created if it does not exist) in the working
+      directory
+
+  run-pack:
+    type: boolean
+    default: true
+    description: >
+      Pack a destructured orb source directory for this orb job to use?
+      Only required if `extract-inline-scripts` is `true`
+
+  pack-source:
+    type: string
+    default: src
+    description: Path to the root folder of an unpacked orb
+
+  pack-destination:
+    type: string
+    default: orb.yml
+    description: Path including the filename to output the packed orb
+
+steps:
+  - checkout
+
+  - when:
+      condition: <<parameters.extract-inline-scripts>>
+      steps:
+        - extract-inline-scripts:
+            target-filepath: <<parameters.scripts-target-filepath>>
+            output-dir: <<parameters.scripts-output-dir>>
+            run-pack: <<parameters.run-pack>>
+            pack-source: <<parameters.pack-source>>
+            pack-destination: <<parameters.pack-destination>>
+
+  - run:
+      name: Check Scripts
+      command: >
+        find '<<parameters.path>>' -not -path '<<parameters.exclude>>'
+        -type f -name '<<parameters.pattern>>' | xargs shellcheck --external-sources | tee -a
+        '<<parameters.output>>'
+
+  - store_artifacts:
+      path: '<<parameters.output>>'
+      destination: shellcheck

@@ -1,0 +1,14 @@
+description: |
+  Exclude subdirectory 'foo' and its contents
+
+usage:
+  version: 2.1
+
+  orbs:
+    shellcheck: circleci/shellcheck@x.y.z
+
+  workflows:
+    shellcheck:
+      jobs:
+        - shellcheck/check:
+            exclude: './foo/*'

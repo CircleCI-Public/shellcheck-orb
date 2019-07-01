@@ -1,0 +1,19 @@
+description: |
+  Use custom executor
+
+usage:
+  version: 2.1
+
+  orbs:
+    shellcheck: circleci/shellcheck@x.y.z
+
+  executors:
+    my-custom-executor:
+      docker:
+        - image: nlknguyen/alpine-shellcheck:v0.4.6
+
+  workflows:
+    shellcheck:
+      jobs:
+        - shellcheck/check:
+            executor: my-custom-executor
