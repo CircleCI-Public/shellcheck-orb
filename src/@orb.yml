@@ -8,4 +8,5 @@ description: |
 
 orbs:
   build-tools: circleci/build-tools@2.6.3
+  circleci-cli: circleci/circleci-cli@0.1.4
   orb-tools: circleci/orb-tools@8.27.2

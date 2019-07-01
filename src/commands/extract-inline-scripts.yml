@@ -46,6 +46,8 @@ steps:
 
   - build-tools/install-ci-tools
 
+  - circleci-cli/install
+
   - run:
       name: Extract shell scripts
       shell: /bin/bash
@@ -54,7 +56,7 @@ steps:
 
         i=0
         until [ $i -eq ${#ORBSOURCE[@]} ]; do
-          LINE="${a[$i]}"
+          LINE="${ORBSOURCE[$i]}"
           if echo "$LINE" | grep "command: |"; then
             script=true; FILE="$i.sh"; j=1; mkdir -p <<parameters.output-dir>>
 
