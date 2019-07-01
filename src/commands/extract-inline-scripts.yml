@@ -48,6 +48,7 @@ steps:
 
   - run:
       name: Extract shell scripts
+      shell: /bin/bash
       command: |
         readarray ORBSOURCE < <<parameters.target-filepath>>
 
