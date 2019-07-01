@@ -44,6 +44,8 @@ steps:
             source: <<parameters.pack-source>>
             destination: <<parameters.pack-destination>>
 
+  - build-tools/install-ci-tools
+
   - run:
       name: Extract shell scripts
       command: |
