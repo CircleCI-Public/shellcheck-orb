@@ -37,16 +37,16 @@ parameters:
     description: Path including the filename to output the packed orb
 
 steps:
+  - build-tools/install-ci-tools
+
+  - circleci-cli/install
+
   - when:
       condition: <<parameters.run-pack>>
       steps:
         - orb-tools/pack:
             source: <<parameters.pack-source>>
             destination: <<parameters.pack-destination>>
-
-  - build-tools/install-ci-tools
-
-  - circleci-cli/install
 
   - run:
       name: Extract shell scripts
