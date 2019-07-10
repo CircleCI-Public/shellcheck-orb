@@ -81,6 +81,12 @@ jobs:
           This file pattern (as passed to `find -not -path`) is used to select
           a path to exclude when searching for files. Currently, this is
           limited to a single pattern.
+      ignore:
+        type: string
+        default: ""
+        description: >
+          Comma-separated string list of error types to ignore, e.g.,
+          `SC2059,SC2034,SC1090`
       path:
         type: string
         default: .
@@ -107,6 +113,10 @@ jobs:
       - run:
           name: Check Scripts
           command: >
+            <<#parameters.ignore>>
+            IGNORE_STRING=<<parameters.ignore>>
+            export SHELLCHECK_OPTS=$(echo "-e ${IGNORE_STRING//,/ -e }")
+            <</parameters.ignore>>
             find '<< parameters.path >>' -not -path '<< parameters.exclude >>'
             -type f -name '<< parameters.pattern >>' | xargs shellcheck --external-sources | tee -a
             '<< parameters.output >>'
