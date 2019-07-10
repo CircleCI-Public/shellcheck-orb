@@ -118,6 +118,9 @@ jobs:
             SHELLCHECK_OPTS=$(echo "-e ${IGNORE_STRING//,/ -e }")
 
             export SHELLCHECK_OPTS="$SHELLCHECK_OPTS"
+
+            echo "Running shellcheck with the following SHELLCHECK_OPTS value..."
+            echo "SHELLCHECK_OPTS=$SHELLCHECK_OPTS"
             <</parameters.ignore>>
 
             find '<<parameters.path>>' -not -path '<<parameters.exclude>>' \
