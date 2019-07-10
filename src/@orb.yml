@@ -112,14 +112,18 @@ jobs:
       - checkout
       - run:
           name: Check Scripts
-          command: >
+          command: |
             <<#parameters.ignore>>
             IGNORE_STRING=<<parameters.ignore>>
-            export SHELLCHECK_OPTS=$(echo "-e ${IGNORE_STRING//,/ -e }")
+            SHELLCHECK_OPTS=$(echo "-e ${IGNORE_STRING//,/ -e }")
+
+            export SHELLCHECK_OPTS="$SHELLCHECK_OPTS"
             <</parameters.ignore>>
-            find '<< parameters.path >>' -not -path '<< parameters.exclude >>'
-            -type f -name '<< parameters.pattern >>' | xargs shellcheck --external-sources | tee -a
-            '<< parameters.output >>'
+
+            find '<<parameters.path>>' -not -path '<<parameters.exclude>>' \
+              -type f -name '<<parameters.pattern>>' | \
+              xargs shellcheck --external-sources | \
+              tee -a '<<parameters.output>>'
       - store_artifacts:
           path: '<< parameters.output >>'
           destination: shellcheck
