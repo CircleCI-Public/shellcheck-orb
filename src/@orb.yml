@@ -11,7 +11,7 @@ executors:
     description: |
       This is a docker image that contains the `shellcheck` binary.
     docker:
-      - image: koalaman/shellcheck-alpine:v0.6.0
+      - image: koalaman/shellcheck-alpine:v0.7.0
 
 examples:
   shellcheck-workflow:
