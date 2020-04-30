@@ -66,6 +66,29 @@ examples:
             - shellcheck/check:
                 executor: my-custom-executor
 
+  add-git-and-ssh:
+    description: |
+      Pre-install git and ssh, for example to run tests against a git tag.
+
+    usage:
+      version: 2.1
+
+      orbs:
+        shellcheck: circleci/shellcheck@x.y.z
+
+      workflows:
+        shellcheck:
+          jobs:
+            - shellcheck/check:
+                pre-steps:
+                  - run:
+                      name: "Install git and SSH client"
+                      command: |
+                        apk add \
+                            --update-cache \
+                            --no-progress \
+                            git \
+                            openssh-client
 jobs:
   check:
     description: |
