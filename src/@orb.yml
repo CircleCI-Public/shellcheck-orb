@@ -102,6 +102,11 @@ jobs:
         description: |
           The filename of the shellcheck output, which is automatically saved
           as a job artifact.
+      severity:
+        type: string
+        default: ""
+        description: |
+          Minimum severity of errors to consider (error, warning, info, style).
       executor:
         type: executor
         default: shellcheck
@@ -118,10 +123,19 @@ jobs:
             SHELLCHECK_OPTS=$(echo "-e ${IGNORE_STRING//,/ -e }")
 
             export SHELLCHECK_OPTS="$SHELLCHECK_OPTS"
-
-            echo "Running shellcheck with the following SHELLCHECK_OPTS value..."
-            echo "SHELLCHECK_OPTS=$SHELLCHECK_OPTS"
             <</parameters.ignore>>
+
+            <<#parameters.severity>>
+            SEVERITY_STRING=<<parameters.severity>>
+            SHELLCHECK_OPTS=$(echo "${SHELLCHECK_OPTS} -S ${SEVERITY_STRING}")
+
+            export SHELLCHECK_OPTS="$SHELLCHECK_OPTS"
+            <</parameters.severity>>
+
+            if [[ -n $SHELLCHECK_OPTS ]]; then
+              echo "Running shellcheck with the following SHELLCHECK_OPTS value..."
+              echo "SHELLCHECK_OPTS=$SHELLCHECK_OPTS"
+            ]]
 
             find '<<parameters.path>>' -not -path '<<parameters.exclude>>' \
               -type f -name '<<parameters.pattern>>' | \
