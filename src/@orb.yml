@@ -1,94 +1,76 @@
-version: 2.1
-
 description: |
   ShellCheck, a static analysis tool for shell scripts
   https://shellcheck.net Check all scripts in your repository using
   `shellcheck` on every commit. This orb's source is available here:
   https://github.com/CircleCI-Public/shellcheck-orb
-
+display:
+  source_url: https://github.com/circleci-public/shellcheck-orb
+examples:
+  add-git-and-ssh:
+    description: |
+      Pre-install git and ssh, for example to run tests against a git tag.
+    usage:
+      orbs:
+        shellcheck: circleci/shellcheck@x.y.z
+      version: 2.1
+      workflows:
+        shellcheck:
+          jobs:
+          - shellcheck/check:
+              pre-steps:
+              - run:
+                  command: |
+                    apk add \
+                        --update-cache \
+                        --no-progress \
+                        git \
+                        openssh-client
+                  name: Install git and SSH client
+  custom-executor:
+    description: |
+      Use custom executor
+    usage:
+      executors:
+        my-custom-executor:
+          docker:
+          - image: nlknguyen/alpine-shellcheck:v0.4.6
+      orbs:
+        shellcheck: circleci/shellcheck@x.y.z
+      version: 2.1
+      workflows:
+        shellcheck:
+          jobs:
+          - shellcheck/check:
+              executor: my-custom-executor
+  exclude-path:
+    description: |
+      Exclude subdirectory 'foo' and its contents
+    usage:
+      orbs:
+        shellcheck: circleci/shellcheck@x.y.z
+      version: 2.1
+      workflows:
+        shellcheck:
+          jobs:
+          - shellcheck/check:
+              exclude: ./foo/*
+  shellcheck-workflow:
+    description: |
+      Checkout and run shellcheck against all files with the extension .sh
+    usage:
+      orbs:
+        shellcheck: circleci/shellcheck@x.y.z
+      version: 2.1
+      workflows:
+        shellcheck:
+          jobs:
+          - shellcheck/check
 executors:
   shellcheck:
     description: |
       This is a docker image that contains the `shellcheck` binary.
     docker:
-      - image: koalaman/shellcheck-alpine:v0.7.0
-
-examples:
-  shellcheck-workflow:
-    description: |
-      Checkout and run shellcheck against all files with the extension .sh
-
-    usage:
-      version: 2.1
-
-      orbs:
-        shellcheck: circleci/shellcheck@x.y.z
-
-      workflows:
-        shellcheck:
-          jobs:
-            - shellcheck/check
-
-  exclude-path:
-    description: |
-      Exclude subdirectory 'foo' and its contents
-
-    usage:
-      version: 2.1
-
-      orbs:
-        shellcheck: circleci/shellcheck@x.y.z
-
-      workflows:
-        shellcheck:
-          jobs:
-            - shellcheck/check:
-                exclude: './foo/*'
-
-  custom-executor:
-    description: |
-      Use custom executor
-
-    usage:
-      version: 2.1
-
-      orbs:
-        shellcheck: circleci/shellcheck@x.y.z
-
-      executors:
-        my-custom-executor:
-          docker:
-            - image: nlknguyen/alpine-shellcheck:v0.4.6
-
-      workflows:
-        shellcheck:
-          jobs:
-            - shellcheck/check:
-                executor: my-custom-executor
-
-  add-git-and-ssh:
-    description: |
-      Pre-install git and ssh, for example to run tests against a git tag.
-
-    usage:
-      version: 2.1
-
-      orbs:
-        shellcheck: circleci/shellcheck@x.y.z
-
-      workflows:
-        shellcheck:
-          jobs:
-            - shellcheck/check:
-                pre-steps:
-                  - run:
-                      name: "Install git and SSH client"
-                      command: |
-                        apk add \
-                            --update-cache \
-                            --no-progress \
-                            git \
-                            openssh-client
+    - image: koalaman/shellcheck-alpine:v0.7.0
 jobs:
   check:
     description: |
@@ -98,58 +80,59 @@ jobs:
     executor: << parameters.executor >>
     parameters:
       exclude:
-        type: string
         default: ""
         description: |
           This file pattern (as passed to `find -not -path`) is used to select
           a path to exclude when searching for files. Currently, this is
           limited to a single pattern.
-      ignore:
         type: string
-        default: ""
-        description: >
-          Comma-separated string list of error types to ignore, e.g.,
-          `SC2059,SC2034,SC1090`
-      path:
-        type: string
-        default: .
-        description: The top-most directory to search for files in.
-      pattern:
-        type: string
-        default: "*.sh"
-        description: |
-          The file pattern as passed to `find` to locate shell scripts.
-      output:
-        type: string
-        default: shellcheck.log
-        description: |
-          The filename of the shellcheck output, which is automatically saved
-          as a job artifact.
       executor:
-        type: executor
         default: shellcheck
         description: |
           Override executor with a custom executor, for example, to choose a
           different version tag.
+        type: executor
+      ignore:
+        default: ""
+        description: |
+          Comma-separated string list of error types to ignore, e.g., `SC2059,SC2034,SC1090`
+        type: string
+      output:
+        default: shellcheck.log
+        description: |
+          The filename of the shellcheck output, which is automatically saved
+          as a job artifact.
+        type: string
+      path:
+        default: .
+        description: The top-most directory to search for files in.
+        type: string
+      pattern:
+        default: '*.sh'
+        description: |
+          The file pattern as passed to `find` to locate shell scripts.
+        type: string
     steps:
-      - checkout
-      - run:
-          name: Check Scripts
-          command: |
-            <<#parameters.ignore>>
-            IGNORE_STRING=<<parameters.ignore>>
-            SHELLCHECK_OPTS=$(echo "-e ${IGNORE_STRING//,/ -e }")
+    - checkout
+    - run:
+        command: |
+          <<#parameters.ignore>>
+          IGNORE_STRING=<<parameters.ignore>>
+          SHELLCHECK_OPTS=$(echo "-e ${IGNORE_STRING//,/ -e }")
 
-            export SHELLCHECK_OPTS="$SHELLCHECK_OPTS"
+          export SHELLCHECK_OPTS="$SHELLCHECK_OPTS"
 
-            echo "Running shellcheck with the following SHELLCHECK_OPTS value..."
-            echo "SHELLCHECK_OPTS=$SHELLCHECK_OPTS"
-            <</parameters.ignore>>
+          echo "Running shellcheck with the following SHELLCHECK_OPTS value..."
+          echo "SHELLCHECK_OPTS=$SHELLCHECK_OPTS"
+          <</parameters.ignore>>
 
-            find '<<parameters.path>>' -not -path '<<parameters.exclude>>' \
-              -type f -name '<<parameters.pattern>>' | \
-              xargs shellcheck --external-sources | \
-              tee -a '<<parameters.output>>'
-      - store_artifacts:
-          path: '<< parameters.output >>'
-          destination: shellcheck
+          find '<<parameters.path>>' -not -path '<<parameters.exclude>>' \
+            -type f -name '<<parameters.pattern>>' | \
+            xargs shellcheck --external-sources | \
+            tee -a '<<parameters.output>>'
+        name: Check Scripts
+    - store_artifacts:
+        destination: shellcheck
+        path: << parameters.output >>
+version: 2.1
+
