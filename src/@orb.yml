@@ -1,3 +1,5 @@
+version: 2.1
+
 description: |
   ShellCheck, a static analysis tool for shell scripts
   https://shellcheck.net Check all scripts in your repository using
