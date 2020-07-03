@@ -3,9 +3,9 @@ version: 2.1
 description: |
   ShellCheck, a static analysis tool for shell scripts
   https://shellcheck.net Check all scripts in your repository using
-  `shellcheck` on every commit. This orb's source is available here:
-  https://github.com/CircleCI-Public/shellcheck-orb
-
+  `shellcheck` on every commit.
+display:
+  source_url: https://github.com/circleci-public/shellcheck-orb
 executors:
   shellcheck:
     description: |
@@ -17,7 +17,6 @@ examples:
   shellcheck-workflow:
     description: |
       Checkout and run shellcheck against all files with the extension .sh
-
     usage:
       version: 2.1
 
@@ -32,7 +31,6 @@ examples:
   exclude-path:
     description: |
       Exclude subdirectory 'foo' and its contents
-
     usage:
       version: 2.1
 
@@ -48,7 +46,6 @@ examples:
   custom-executor:
     description: |
       Use custom executor
-
     usage:
       version: 2.1
 
@@ -69,7 +66,6 @@ examples:
   add-git-and-ssh:
     description: |
       Pre-install git and ssh, for example to run tests against a git tag.
-
     usage:
       version: 2.1
 
@@ -139,13 +135,10 @@ jobs:
             <<#parameters.ignore>>
             IGNORE_STRING=<<parameters.ignore>>
             SHELLCHECK_OPTS=$(echo "-e ${IGNORE_STRING//,/ -e }")
-
             export SHELLCHECK_OPTS="$SHELLCHECK_OPTS"
-
             echo "Running shellcheck with the following SHELLCHECK_OPTS value..."
             echo "SHELLCHECK_OPTS=$SHELLCHECK_OPTS"
             <</parameters.ignore>>
-
             find '<<parameters.path>>' -not -path '<<parameters.exclude>>' \
               -type f -name '<<parameters.pattern>>' | \
               xargs shellcheck --external-sources | \
