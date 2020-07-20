@@ -12,8 +12,8 @@ if cat /etc/issue | grep Debian > /dev/null 2>&1 || cat /etc/issue | grep Ubuntu
     if [[ $EUID == 0 ]]; then export SUDO=""; else # Check if we're root
         export SUDO="sudo";
     fi
-
-    $SUDO apt install shellcheck
+    $SUDO apt update
+    $SUDO apt install -y shellcheck
     echo $?
 fi
 
@@ -21,7 +21,7 @@ if cat /etc/issue | grep Arch > /dev/null 2>&1; then
     if [[ $EUID == 0 ]]; then export SUDO=""; else # Check if we're root
         export SUDO="sudo";
     fi
-
+    $SUDO pacman -Sy
     $SUDO pacman -S shellcheck
     exit $?
 fi
