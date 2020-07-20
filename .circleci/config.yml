@@ -75,6 +75,7 @@ workflows:
       - integration-test_install-debian
       - integration-test_install-alpine
       - integration-test_install-macos
+      - integration-test_extract-inline-scripts
 
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: circleci/shellcheck
@@ -89,6 +90,7 @@ workflows:
             - integration-test_install-debian
             - integration-test_install-alpine
             - integration-test_install-macos
+            - integration-test_extract-inline-scripts
           filters:
             branches:
               only: master
