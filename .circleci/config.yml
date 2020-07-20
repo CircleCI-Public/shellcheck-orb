@@ -39,7 +39,7 @@ jobs:
           command: shellcheck -V
   integration-test_extract-inline-scripts:
     docker:
-      - image: cimg/edge
+      - image: cimg/base:edge
     steps:
       - checkout
       - shellcheck/install
