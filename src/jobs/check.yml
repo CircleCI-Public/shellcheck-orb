@@ -39,54 +39,8 @@ parameters:
       Override executor with a custom executor, for example, to choose a
       different version tag.
 
-  extract-inline-scripts:
-    type: boolean
-    default: false
-    description: |
-      EXPERIMENTAL! Extract inline scripts from a packed orb source YAML
-      file, store them as files, and check them
-
-  scripts-target-filepath:
-    type: string
-    default: orb.yml
-    description: >
-      Where is the YAML file containing orb source code? Defaults to a
-      file named `orb.yml` in the working directory
-
-  scripts-output-dir:
-    type: string
-    default: scripts
-    description: >
-      Where should scripts be outputted? Defaults to a directory named
-      `scripts` (it will be created if it does not exist) in the working
-      directory
-
-  run-pack:
-    type: boolean
-    default: true
-    description: >
-      Pack a destructured orb source directory for this orb job to use?
-      Only required if `extract-inline-scripts` is `true`
-
-  pack-source:
-    type: string
-    default: src
-    description: Path to the root folder of an unpacked orb
-
-  pack-destination:
-    type: string
-    default: orb.yml
-    description: Path including the filename to output the packed orb
-
 steps:
   - checkout
-
-  - when:
-      condition: <<parameters.extract-inline-scripts>>
-      steps:
-        - extract-inline-scripts:
-            target-filepath: <<parameters.scripts-target-filepath>>
-            output-dir: <<parameters.scripts-output-dir>>
 
   - check:
       exclude: <<parameters.exclude>>

@@ -37,20 +37,6 @@ jobs:
       - run:
           name: Verify Shellcheck install
           command: shellcheck -V
-  integration-test_extract-inline-scripts:
-    docker:
-      - image: cimg/base:edge
-    steps:
-      - checkout
-      - shellcheck/install
-      - shellcheck/extract-inline-scripts:
-          target-filepath: sample/sample.yml
-          output-dir: sample/extracted
-      - run:
-          name: Verify contents of sample/extracted
-          command: ls -alh sample/extracted
-      - shellcheck/check:
-          path: sample/extracted
 
 workflows:
   # This `lint-pack_validate_publish-dev` workflow will run on any commit.
@@ -78,7 +64,6 @@ workflows:
       - integration-test_install-debian
       - integration-test_install-alpine
       - integration-test_install-macos
-      - integration-test_extract-inline-scripts
 
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: circleci/shellcheck
@@ -93,7 +78,6 @@ workflows:
             - integration-test_install-debian
             - integration-test_install-alpine
             - integration-test_install-macos
-            - integration-test_extract-inline-scripts
           filters:
             branches:
               only: master
