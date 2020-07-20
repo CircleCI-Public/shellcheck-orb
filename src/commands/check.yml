@@ -20,7 +20,7 @@ parameters:
     default: "*.sh"
     description: |
       The file pattern as passed to `find` to locate shell scripts.
-  
+
   output-dir:
     type: string
     default: scripts

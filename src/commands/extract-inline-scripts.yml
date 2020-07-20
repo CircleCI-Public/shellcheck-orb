@@ -26,8 +26,8 @@ steps:
       name: Extract shell scripts
       shell: /bin/bash
       environment:
-          TARGET_FILEPATH: <<parameters.target-filepath>>
-          OUTPUT_DIR: <<parameters.output-dir>>
+        TARGET_FILEPATH: <<parameters.target-filepath>>
+        OUTPUT_DIR: <<parameters.output-dir>>
       command: << include(scripts/extract-inline-scripts.sh) >>
 
   - store_artifacts:
