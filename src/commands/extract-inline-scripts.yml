@@ -24,7 +24,6 @@ parameters:
 steps:
   - run:
       name: Extract shell scripts
-      shell: /bin/bash
       environment:
         TARGET_FILEPATH: <<parameters.target-filepath>>
         OUTPUT_DIR: <<parameters.output-dir>>
