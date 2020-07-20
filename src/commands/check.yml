@@ -21,13 +21,12 @@ parameters:
     description: |
       The file pattern as passed to `find` to locate shell scripts.
 
-  output-dir:
+  output:
     type: string
-    default: scripts
-    description: >
-      Where should scripts be outputted? Defaults to a directory named
-      `scripts` (it will be created if it does not exist) in the working
-      directory
+    default: shellcheck.log
+    description: |
+      The filename of the shellcheck output, which is automatically saved
+      as a job artifact.
 
 steps:
   - run:
@@ -36,5 +35,9 @@ steps:
         DIRPATH: <<parameters.path>>
         EXCLUDE: <<parameters.exclude>>
         PATTERN: <<parameters.pattern>>
-        OUTPUT: <<parameters.output-dir>>
+        OUTPUT: <<parameters.output>>
       command: << include(scripts/check.sh) >>
+
+  - store_artifacts:
+      path: <<parameters.output>>
+      destination: shellcheck

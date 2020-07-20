@@ -9,7 +9,7 @@ parameters:
     type: string
     default: orb.yml
     description: >
-      Where is the YAML file containing orb source code? Defaults to a
+      Where is the YAML file containing configuration source? Defaults to a
       file named `orb.yml` in the working directory
 
   output-dir:
