@@ -20,73 +20,15 @@ parameters:
       `scripts` (it will be created if it does not exist) in the working
       directory
 
-  run-pack:
-    type: boolean
-    default: true
-    description: >
-      Pack a destructured orb source directory for this orb command to use?
-
-  pack-source:
-    type: string
-    default: src
-    description: Path to the root folder of an unpacked orb
-
-  pack-destination:
-    type: string
-    default: orb.yml
-    description: Path including the filename to output the packed orb
-
-  debug:
-    type: boolean
-    default: false
-    description: >
-      Extra output for orb developers
 
 steps:
-  - build-tools/install-ci-tools
-
-  - circleci-cli/install
-
-  - when:
-      condition: <<parameters.run-pack>>
-      steps:
-        - orb-tools/pack:
-            source: <<parameters.pack-source>>
-            destination: <<parameters.pack-destination>>
-
   - run:
       name: Extract shell scripts
       shell: /bin/bash
-      command: |
-        readarray ORBSOURCE < <<parameters.target-filepath>>
-
-        i=0
-        until [ $i -eq ${#ORBSOURCE[@]} ]; do
-          LINE="${ORBSOURCE[$i]}"
-          echo "$LINE"
-          if echo "$LINE" | grep "command: |"; then
-            script=true; FILE="$i.sh"; j=1; mkdir -p <<parameters.output-dir>>
-            while "$script"; do
-              SCRIPTLINE="${ORBSOURCE[$i+$j]}"
-
-              # if this is true, we are still in the command block
-              if [[ ! $(echo "$SCRIPTLINE" | grep -e "name: " \
-                -e "shell: " -e "environment: " -e "background: " \
-                -e "working_directory: " -e "no_output_timeout: " \
-                -e "when: ") ]]; then
-                echo "$SCRIPTLINE" >> "<<parameters.output-dir>>/$FILE"
-                ((j++))
-                continue
-              else
-                script=false
-                i=$(( i + j ))
-              fi
-            done
-
-          else
-            ((i++))
-          fi
-        done
+      environment:
+          TARGET_FILEPATH: <<parameters.target-filepath>>
+          OUTPUT_DIR: <<parameters.output-dir>>
+      command: << include(scripts/extract-inline-scripts.sh) >>
 
   - store_artifacts:
       path: <<parameters.output-dir>>

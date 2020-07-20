@@ -5,7 +5,7 @@ description: |
 parameters:
   tag:
     type: string
-    default: v0.6.0
+    default: v0.7.1
     description: >
       Tag of the koalaman/shellcheck-alpine image to use:
       https://hub.docker.com/r/koalaman/shellcheck-alpine/tags

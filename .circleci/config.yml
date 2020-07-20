@@ -1,108 +1,60 @@
 version: 2.1
 
 orbs:
-  orb-tools: circleci/orb-tools@8.27.1
-  shellcheck: circleci/shellcheck@dev:alpha
+  orb-tools: circleci/orb-tools@9.2
+  shellcheck: circleci/shellcheck@<<pipeline.parameters.dev-orb-version>>
+
+parameters:
+  run-integration-tests:
+    type: boolean
+    default: false
+  dev-orb-version:
+    type: string
+    default: "dev:alpha"
 
 jobs:
-
-integration-dev_filters: &integration-dev_filters
-  branches:
-    ignore: /.*/
-  tags:
-    only: /integration-.*/
-
-integration-master_filters: &integration-master_filters
-  branches:
-    ignore: /.*/
-  tags:
-    only: /master-.*/
-
-add-ssh-keys: &add-ssh-keys
-  [run: "apk add git openssh", add_ssh_keys: {fingerprints: ["40:21:b7:d7:fe:ea:dd:80:ca:c8:34:7a:37:b4:b4:d2"]}]
-
-cleanup-git-tag: &cleanup-git-tag
-  [run: {when: "always", name: "cleanup tag", command: "git config --global user.email $CIRCLE_USERNAME@users.noreply.github.com && git config --global user.name $CIRCLE_USERNAME && git push --delete origin $CIRCLE_TAG"}]
+  integration-test_install:
+    docker:
+      - image: cimg/base:edge
+    steps:
+      - shellcheck/install
 
 workflows:
+  # This `lint-pack_validate_publish-dev` workflow will run on any commit.
   lint_pack-validate_publish-dev:
+    unless: << pipeline.parameters.run-integration-tests >>
     jobs:
       - orb-tools/lint
-
       - orb-tools/pack:
-          requires: [orb-tools/lint]
+          requires:
+            - orb-tools/lint
 
       - orb-tools/publish-dev:
-          orb-name: circleci/shellcheck
-          context: orb-publishing
-          requires: [orb-tools/pack]
+          orb-name: circleci/build-tools
+          requires:
+            - orb-tools/pack
 
-      - orb-tools/trigger-integration-workflow:
+      - orb-tools/trigger-integration-tests-workflow:
           name: trigger-integration-dev
-          context: orb-publishing
-          ssh-fingerprints: 40:21:b7:d7:fe:ea:dd:80:ca:c8:34:7a:37:b4:b4:d2
-          requires: [orb-tools/publish-dev]
-          filters:
-            branches:
-              ignore: master
+          requires:
+            - orb-tools/publish-dev
 
-      - orb-tools/trigger-integration-workflow:
-          name: trigger-integration-master
+  integration-tests_prod-release:
+    when: << pipeline.parameters.run-integration-tests >>
+    jobs:
+      - integration-test_install
+
+      - orb-tools/dev-promote-prod-from-commit-subject:
+          orb-name: circleci/build-tools
           context: orb-publishing
-          cleanup-tags: true
+          add-pr-comment: true
+          bot-token-variable: GHI_TOKEN
+          bot-user: cpe-bot
+          fail-if-semver-not-indicated: true
+          publish-version-tag: true
           ssh-fingerprints: 40:21:b7:d7:fe:ea:dd:80:ca:c8:34:7a:37:b4:b4:d2
-          tag: master
-          requires: [orb-tools/publish-dev]
+          requires:
+            - integration-test_install
           filters:
             branches:
               only: master
-
-  integration_test-prod_deploy:
-    jobs:
-      # triggered by non-master branch commits
-      - shellcheck/check:
-          name: shellcheck-check_dev
-          extract-inline-scripts: true
-          filters: *integration-dev_filters
-
-      # triggered by master branch commits
-      - shellcheck/check:
-          name: shellcheck-check_master
-          extract-inline-scripts: true
-          filters: *integration-master_filters
-
-      # patch, minor, or major publishing
-      - orb-tools/dev-promote-prod:
-          name: dev-promote-patch
-          context: orb-publishing
-          orb-name: circleci/shellcheck
-          requires: [shellcheck-check_master]
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-patch.*/
-
-      - orb-tools/dev-promote-prod:
-          name: dev-promote-minor
-          context: orb-publishing
-          orb-name: circleci/shellcheck
-          release: minor
-          requires: [shellcheck-check_master]
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-minor.*/
-
-      - orb-tools/dev-promote-prod:
-          name: dev-promote-major
-          context: orb-publishing
-          orb-name: circleci/shellcheck
-          release: major
-          requires: [shellcheck-check_master]
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-major.*/

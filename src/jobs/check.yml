@@ -91,12 +91,10 @@ steps:
             pack-source: <<parameters.pack-source>>
             pack-destination: <<parameters.pack-destination>>
 
-  - run:
-      name: Check Scripts
-      command: >
-        find '<<parameters.path>>' -not -path '<<parameters.exclude>>'
-        -type f -name '<<parameters.pattern>>' | xargs shellcheck --external-sources | tee -a
-        '<<parameters.output>>'
+  - check:
+      exclude: <<parameters.exclude>>
+      path: <<parameters.path>>
+      pattern: <<parameters.pattern>>
 
   - store_artifacts:
       path: '<<parameters.output>>'
