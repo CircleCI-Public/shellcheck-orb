@@ -20,7 +20,7 @@ jobs:
       - shellcheck/install
       - run:
           name: Verify Shellcheck install
-          command: shellcheck --help
+          command: shellcheck -V
   integration-test_install-alpine:
     docker:
       - image: alpine
@@ -28,7 +28,7 @@ jobs:
       - shellcheck/install
       - run:
           name: Verify Shellcheck install
-          command: shellcheck --help
+          command: shellcheck -V
   integration-test_install-macos:
     macos:
       xcode: "11.6.0"
@@ -36,7 +36,7 @@ jobs:
       - shellcheck/install
       - run:
           name: Verify Shellcheck install
-          command: shellcheck --help
+          command: shellcheck -V
   integration-test_extract-inline-scripts:
     executor: shellcheck/default
     steps:
