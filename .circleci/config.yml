@@ -30,7 +30,7 @@ workflows:
             - orb-tools/lint
 
       - orb-tools/publish-dev:
-          orb-name: circleci/build-tools
+          orb-name: circleci/shellcheck
           requires:
             - orb-tools/pack
 
@@ -45,7 +45,7 @@ workflows:
       - integration-test_install
 
       - orb-tools/dev-promote-prod-from-commit-subject:
-          orb-name: circleci/build-tools
+          orb-name: circleci/shellcheck
           context: orb-publishing
           add-pr-comment: true
           bot-token-variable: GHI_TOKEN
