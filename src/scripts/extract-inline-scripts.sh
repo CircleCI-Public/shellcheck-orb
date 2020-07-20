@@ -1,4 +1,3 @@
-#!/bin/sh
 readarray ORBSOURCE < $TARGET_FILEPATH
 
 i=0
