@@ -1,0 +1,3 @@
+command: |
+  #!/bin/sh
+  echo "Hello, world!"

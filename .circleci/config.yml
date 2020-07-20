@@ -38,11 +38,13 @@ jobs:
           name: Verify Shellcheck install
           command: shellcheck -V
   integration-test_extract-inline-scripts:
-    executor: shellcheck/default
+    docker:
+      - image: cimg/edge
     steps:
       - checkout
+      - shellcheck/install
       - shellcheck/extract-inline-scripts:
-          target-filepath: sample/sample.yml
+          target-filepath: ~/project/sample/sample.yml
           output-dir: sample/extracted
       - run:
           name: Verify contents of sample/extracted
