@@ -44,7 +44,7 @@ jobs:
       - checkout
       - shellcheck/install
       - shellcheck/extract-inline-scripts:
-          target-filepath: ~/project/sample/sample.yml
+          target-filepath: sample/sample.yml
           output-dir: sample/extracted
       - run:
           name: Verify contents of sample/extracted
