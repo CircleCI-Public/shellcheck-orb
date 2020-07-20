@@ -2,7 +2,7 @@ description: >
   Install Shellcheck.
 
 steps:
-  run:
-    shell: /bin/bash
-    name: Install Shellcheck
-    command: << include(scripts/install.sh) >>
+  - run:
+      shell: /bin/bash
+      name: Install Shellcheck
+      command: << include(scripts/install.sh) >>

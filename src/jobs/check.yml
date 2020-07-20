@@ -87,9 +87,6 @@ steps:
         - extract-inline-scripts:
             target-filepath: <<parameters.scripts-target-filepath>>
             output-dir: <<parameters.scripts-output-dir>>
-            run-pack: <<parameters.run-pack>>
-            pack-source: <<parameters.pack-source>>
-            pack-destination: <<parameters.pack-destination>>
 
   - check:
       exclude: <<parameters.exclude>>

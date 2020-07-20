@@ -20,13 +20,21 @@ parameters:
     default: "*.sh"
     description: |
       The file pattern as passed to `find` to locate shell scripts.
+  
+  output-dir:
+    type: string
+    default: scripts
+    description: >
+      Where should scripts be outputted? Defaults to a directory named
+      `scripts` (it will be created if it does not exist) in the working
+      directory
 
 steps:
-  run:
-    name: Shellcheck scripts in <<parameters.path>>
-    environment:
-      DIRPATH: <<parameters.path>>
-      EXCLUDE: <<parameters.exclude>>
-      PATTERN: <<parameters.pattern>>
-      OUTPUT: <<parameters.output>>
-    command: << include(scripts/check.sh) >>
+  - run:
+      name: Shellcheck scripts in <<parameters.path>>
+      environment:
+        DIRPATH: <<parameters.path>>
+        EXCLUDE: <<parameters.exclude>>
+        PATTERN: <<parameters.pattern>>
+        OUTPUT: <<parameters.output-dir>>
+      command: << include(scripts/check.sh) >>
