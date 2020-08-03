@@ -24,7 +24,7 @@ executors:
       xcode: "11.6.0"
 
 jobs:
-  integration-test_install:
+  integration-test_full:
     parameters:
       env:
         type: executor
@@ -35,6 +35,9 @@ jobs:
       - run:
           name: Verify Shellcheck install
           command: shellcheck -V
+      - shellcheck/check:
+          exclude: SC2148
+
 
 
 workflows:
@@ -60,7 +63,7 @@ workflows:
   integration-tests_prod-release:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
-      - integration-test_install:
+      - integration-test_full:
           matrix:
             parameters:
               env:
@@ -78,7 +81,7 @@ workflows:
           publish-version-tag: true
           ssh-fingerprints: 40:21:b7:d7:fe:ea:dd:80:ca:c8:34:7a:37:b4:b4:d2
           requires:
-            - integration-test_install
+            - integration-test_full
           filters:
             branches:
               only: master
