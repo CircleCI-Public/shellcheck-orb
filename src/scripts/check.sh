@@ -1,3 +1,18 @@
-find $DIRPATH -not -path $EXCLUDE -type f -name $PATTERN | \ 
-    xargs shellcheck --external-sources | \
-    tee -a $OUTPUT
+
+Set_SHELLCHECK_EXCLUDE_PARAM() {
+    if [ -n "$SC_PARAM_EXCLUDE" ]; then
+        SHELLCHECK_EXCLUDE_PARAM=" --exclude $SC_PARAM_EXCLUDE"
+    else
+        SHELLCHECK_EXCLUDE_PARAM=""
+    fi
+}
+
+SC_Main() {
+    Set_SHELLCHECK_EXCLUDE_PARAM
+    shellcheck "$SHELLCHECK_EXCLUDE_PARAM" --severity "$SC_PARAM_SEVERITY" "$SC_PARAM_FILES" | tee -a "$SC_PARAM_OUTPUT"
+}
+# Will not run if sourced from another script. This is done so this script may be tested.
+# View src/tests for more information.
+if [[ "$_" == "$0" ]]; then
+    SC_Main
+fi

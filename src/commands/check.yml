@@ -3,39 +3,42 @@ description: >
 
 parameters:
   exclude:
+    description: >
+      A comma separated list of SC codes to explicitylu ignore. Example: "SC1000,SC1001"
     type: string
     default: ""
-    description: |
-      This file pattern (as passed to `find -not -path`) is used to select
-      a path to exclude when searching for files. Currently, this is
-      limited to a single pattern.
-
-  path:
+  files:
+    description: >
+      The relative path to the file(s) to check. Globbing supported.
     type: string
-    default: .
-    description: The top-most directory to search for files in.
-
-  pattern:
-    type: string
-    default: "*.sh"
-    description: |
-      The file pattern as passed to `find` to locate shell scripts.
-
+    default: "./**/*.sh"
+  severity:
+    description: >
+      Specify minimum severity of errors to consider. Valid values in order of severity are error, warning, info and style.
+    enum: ["error", "warning", "info", "style"]
+    type: enum
+    default: "style"
+  format:
+    description: >
+      Specify the output format of shellcheck. Valid values include: "tty", "gcc", "checkstyle", "diff", "json1", "json", "quiet"
+    enum: ["tty", "gcc", "checkstyle", "diff", "json1", "json", "quiet"]
+    default: "tty"
+    type: enum
   output:
     type: string
     default: shellcheck.log
     description: |
       The filename of the shellcheck output, which is automatically saved
-      as a job artifact.
+      as a job artifact
 
 steps:
   - run:
-      name: Shellcheck scripts in <<parameters.path>>
+      name: Run Shellcheck
       environment:
-        DIRPATH: <<parameters.path>>
-        EXCLUDE: <<parameters.exclude>>
-        PATTERN: <<parameters.pattern>>
-        OUTPUT: <<parameters.output>>
+        SC_PARAM_EXCLUDE: <<parameters.exclude>>
+        SC_PARAM_FILES: <<parameters.files>>
+        SC_PARAM_SEVERITY: <<parameters.severity>>
+        SC_PARAM_OUTPUT: <<parameters.output>>
       command: << include(scripts/check.sh) >>
 
   - store_artifacts:

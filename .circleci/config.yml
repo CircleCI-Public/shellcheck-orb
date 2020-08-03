@@ -12,31 +12,30 @@ parameters:
     type: string
     default: "dev:alpha"
 
-jobs:
-  integration-test_install-debian:
+executors:
+  debian:
     docker:
       - image: cimg/base:edge
-    steps:
-      - shellcheck/install
-      - run:
-          name: Verify Shellcheck install
-          command: shellcheck -V
-  integration-test_install-alpine:
+  alpine:
     docker:
       - image: alpine
-    steps:
-      - shellcheck/install
-      - run:
-          name: Verify Shellcheck install
-          command: shellcheck -V
-  integration-test_install-macos:
+  mac:
     macos:
       xcode: "11.6.0"
+
+jobs:
+  integration-test_install:
+    parameters:
+      env:
+        type: executor
+        default: debian
+    executor: <<parameters.env>>
     steps:
       - shellcheck/install
       - run:
           name: Verify Shellcheck install
           command: shellcheck -V
+
 
 workflows:
   # This `lint-pack_validate_publish-dev` workflow will run on any commit.
@@ -61,9 +60,12 @@ workflows:
   integration-tests_prod-release:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
-      - integration-test_install-debian
-      - integration-test_install-alpine
-      - integration-test_install-macos
+      - integration-test_install:
+          parameters:
+            env:
+              - debian
+              - mac
+              - alpine
 
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: circleci/shellcheck
@@ -75,9 +77,7 @@ workflows:
           publish-version-tag: true
           ssh-fingerprints: 40:21:b7:d7:fe:ea:dd:80:ca:c8:34:7a:37:b4:b4:d2
           requires:
-            - integration-test_install-debian
-            - integration-test_install-alpine
-            - integration-test_install-macos
+            - integration-test_install
           filters:
             branches:
               only: master
