@@ -61,11 +61,12 @@ workflows:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
       - integration-test_install:
-          parameters:
-            env:
-              - debian
-              - mac
-              - alpine
+          matrix:
+            parameters:
+              env:
+                - debian
+                - mac
+                - alpine
 
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: circleci/shellcheck
