@@ -1,4 +1,4 @@
-if echo $OSTYPE | grep darwin > /dev/null 2>&1; then
+if echo "$OSTYPE "| grep darwin > /dev/null 2>&1; then
     brew install shellcheck
     exit $?
 fi
@@ -12,8 +12,12 @@ if cat /etc/issue | grep Debian > /dev/null 2>&1 || cat /etc/issue | grep Ubuntu
     if [[ $EUID == 0 ]]; then export SUDO=""; else # Check if we're root
         export SUDO="sudo";
     fi
-    $SUDO apt update
-    $SUDO apt install -y shellcheck
+    # This is currently installing an outdated version of Shellcheck.
+    # $SUDO apt update
+    # $SUDO apt install -y shellcheck
+    wget -qO- https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz | tar -xJf -
+    cd shellcheck-v0.7.1/ || false
+    $SUDO cp shellcheck /usr/local/bin
     echo $?
 fi
 
