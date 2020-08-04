@@ -9,7 +9,10 @@ Set_SHELLCHECK_EXCLUDE_PARAM() {
 
 SC_Main() {
     Set_SHELLCHECK_EXCLUDE_PARAM
-    shellcheck "$SHELLCHECK_EXCLUDE_PARAM" --severity "$SC_PARAM_SEVERITY" "$SC_PARAM_FILES" | tee -a "$SC_PARAM_OUTPUT"
+    # POSIX
+    find "$SC_PARAM_PATH" -type f \( -name '*.sh' -o -name '*.bash' -o -name '*.ksh' -o -name '*.bashrc' -o -name '*.bash_profile' -o -name '*.bash_login' -o -name '*.bash_logout' \) \
+        | xargs -0 shellcheck "$SHELLCHECK_EXCLUDE_PARAM" --severity "$SC_PARAM_SEVERITY" "$SC_PARAM_FILES" | tee -a "$SC_PARAM_OUTPUT"
+    ## "$SHELLCHECK_EXCLUDE_PARAM" --severity "$SC_PARAM_SEVERITY" "$SC_PARAM_FILES" | tee -a "$SC_PARAM_OUTPUT"
 }
 # Will not run if sourced from another script. This is done so this script may be tested.
 # View src/tests for more information.

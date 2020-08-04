@@ -7,11 +7,11 @@ parameters:
       A comma separated list of SC codes to explicitylu ignore. Example: "SC1000,SC1001"
     type: string
     default: ""
-  files:
+  path:
     description: >
-      The relative path to the file(s) to check. Globbing supported.
+      Specify the root path containing the shell scripts. The directory will be recursively searched.
     type: string
-    default: "./**/*.sh"
+    default: "~/project"
   severity:
     description: >
       Specify minimum severity of errors to consider. Valid values in order of severity are error, warning, info and style.
@@ -36,7 +36,7 @@ steps:
       name: Run Shellcheck
       environment:
         SC_PARAM_EXCLUDE: <<parameters.exclude>>
-        SC_PARAM_FILES: <<parameters.files>>
+        SC_PARAM_PATH: <<parameters.path>>
         SC_PARAM_SEVERITY: <<parameters.severity>>
         SC_PARAM_OUTPUT: <<parameters.output>>
       command: << include(scripts/check.sh) >>

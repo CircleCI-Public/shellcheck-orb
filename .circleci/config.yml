@@ -38,6 +38,7 @@ jobs:
           command: shellcheck -V
       - shellcheck/check:
           exclude: SC2148
+          path: ./src/scripts
 
 
 
