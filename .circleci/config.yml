@@ -31,6 +31,7 @@ jobs:
         default: debian
     executor: <<parameters.env>>
     steps:
+      - checkout
       - shellcheck/install
       - run:
           name: Verify Shellcheck install
