@@ -39,8 +39,6 @@ jobs:
       - shellcheck/check:
           exclude: SC2148
 
-
-
 workflows:
   # This `lint-pack_validate_publish-dev` workflow will run on any commit.
   lint_pack-validate_publish-dev:
