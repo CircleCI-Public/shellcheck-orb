@@ -37,7 +37,7 @@ jobs:
           name: Verify Shellcheck install
           command: shellcheck -V
       - shellcheck/check:
-          exclude: SC2148
+          exclude: SC2148,SC2038
 
 workflows:
   # This `lint-pack_validate_publish-dev` workflow will run on any commit.
