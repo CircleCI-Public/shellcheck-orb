@@ -3,12 +3,12 @@ if echo "$OSTYPE "| grep darwin > /dev/null 2>&1; then
     exit $?
 fi
 
-if cat /etc/issue | grep Alpine > /dev/null 2>&1; then
+if grep Alpine /etc/issue > /dev/null 2>&1; then
     apk add shellcheck
     exit $?
 fi
 
-if cat /etc/issue | grep Debian > /dev/null 2>&1 || cat /etc/issue | grep Ubuntu > /dev/null 2>&1; then
+if  grep Debian /etc/issue > /dev/null 2>&1 || grep Ubuntu /etc/issue > /dev/null 2>&1; then
     if [[ $EUID == 0 ]]; then export SUDO=""; else # Check if we're root
         export SUDO="sudo";
     fi
@@ -21,7 +21,7 @@ if cat /etc/issue | grep Debian > /dev/null 2>&1 || cat /etc/issue | grep Ubuntu
     echo $?
 fi
 
-if cat /etc/issue | grep Arch > /dev/null 2>&1; then
+if grep Arch /etc/issue > /dev/null 2>&1; then
     if [[ $EUID == 0 ]]; then export SUDO=""; else # Check if we're root
         export SUDO="sudo";
     fi
