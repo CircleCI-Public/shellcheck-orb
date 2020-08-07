@@ -1,13 +1,16 @@
 
 Set_SHELLCHECK_EXCLUDE_PARAM() {
+    echo "DEBUG: Set Exclude Param"
     if [ -n "$SC_PARAM_EXCLUDE" ]; then
         SHELLCHECK_EXCLUDE_PARAM="--exclude=$SC_PARAM_EXCLUDE"
     else
         SHELLCHECK_EXCLUDE_PARAM=""
     fi
+    echo "DEBUG: Value: $SHELLCHECK_EXCLUDE_PARAM"
 }
 
 Run_ShellCheck() {
+    echo "DEBUG: Shellcheck files"
     find "$SC_PARAM_DIR" ! -name "$(printf "*\n*")" -name '*.sh' > tmp
     set +e
     while IFS= read -r script
@@ -19,9 +22,10 @@ Run_ShellCheck() {
 }
 
 Catch_SC_Errors() {
-    RED='\033[0;31m'
-    GREEN='\033[1;31m'
-    NC='\033[0m' # No Color
+    echo "DEBUG: Check for errors"
+    RED='\e[1;31m'
+    GREEN='\e[1;32m'
+    NC='\e[0m' # No Color
     if [ -s "$SC_PARAM_OUTPUT" ]; then
         # shellcheck disable=SC2059
         printf "${RED}ShellCheck Errors Found${NC}\n"
@@ -34,6 +38,7 @@ Catch_SC_Errors() {
 }
 
 SC_Main() {
+    echo "DEBUG: Starting"
     Set_SHELLCHECK_EXCLUDE_PARAM
     Run_ShellCheck
     Catch_SC_Errors
@@ -41,5 +46,6 @@ SC_Main() {
 # Will not run if sourced from another script. This is done so this script may be tested.
 # View src/tests for more information.
 if [[ "$_" == "$0" ]]; then
+    echo "DEBUG: Executed"
     SC_Main
 fi
