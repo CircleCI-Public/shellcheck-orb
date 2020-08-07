@@ -1,9 +1,9 @@
 
 Set_SHELLCHECK_EXCLUDE_PARAM() {
     if [ -n "$SC_PARAM_EXCLUDE" ]; then
-        SHELLCHECK_EXCLUDE_PARAM="$SC_PARAM_EXCLUDE"
+        SHELLCHECK_EXCLUDE_PARAM="--exclude $SC_PARAM_EXCLUDE"
     else
-        SHELLCHECK_EXCLUDE_PARAM='""'
+        SHELLCHECK_EXCLUDE_PARAM=""
     fi
 }
 
@@ -12,7 +12,7 @@ Run_ShellCheck() {
     set +e
     while IFS= read -r script
     do
-        shellcheck --exclude "$SHELLCHECK_EXCLUDE_PARAM" --severity "$SC_PARAM_SEVERITY" "$script" >>"$SC_PARAM_OUTPUT"
+        shellcheck "$SHELLCHECK_EXCLUDE_PARAM" --severity "$SC_PARAM_SEVERITY" "$script" >>"$SC_PARAM_OUTPUT"
     done < tmp
     set -eo pipefail
     rm tmp
