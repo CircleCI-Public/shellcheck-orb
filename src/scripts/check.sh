@@ -23,7 +23,7 @@ Catch_SC_Errors() {
     GREEN='\033[1;31m'
     NC='\033[0m' # No Color
     if [ -s "$SC_PARAM_OUTPUT" ]; then
-        # shellcheck disable=SC2059
+        shellcheck disable=SC2059
         printf "${RED}ShellCheck Errors Found${NC}\n"
         cat "$SC_PARAM_OUTPUT"
         exit 1
