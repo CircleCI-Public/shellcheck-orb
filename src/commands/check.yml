@@ -34,6 +34,10 @@ parameters:
     type: string
     default: "bash"
     description: Shell language to check against.
+  pattern:
+    type: string
+    default: ""
+    description: The file pattern to search for. By default will search for "*.sh"
 
 steps:
   - run:
@@ -44,6 +48,7 @@ steps:
         SC_PARAM_SEVERITY: <<parameters.severity>>
         SC_PARAM_OUTPUT: <<parameters.output>>
         SC_PARAM_SHELL: <<parameters.shell>>
+        SC_PARAM_PATTERN: <<parameters.pattern>>
       command: << include(scripts/check.sh) >>
 
   - store_artifacts:

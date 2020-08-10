@@ -44,6 +44,11 @@ parameters:
     type: string
     default: "bash"
     description: Shell language to check against.
+  pattern:
+    type: string
+    default: ""
+    description: The file pattern to search for. By default will search for "*.sh"
+
 
 steps:
   - checkout
@@ -54,3 +59,5 @@ steps:
       format: <<parameters.format>>
       output: <<parameters.output>>
       shell: <<parameters.shell>>
+      pattern: <<parameters.pattern>>
+

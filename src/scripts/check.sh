@@ -1,17 +1,15 @@
 
 Set_SHELLCHECK_EXCLUDE_PARAM() {
-    echo "DEBUG: Set Exclude Param"
     if [ -n "$SC_PARAM_EXCLUDE" ]; then
         SHELLCHECK_EXCLUDE_PARAM="--exclude=$SC_PARAM_EXCLUDE"
     else
         SHELLCHECK_EXCLUDE_PARAM=""
     fi
-    echo "DEBUG: Value: $SHELLCHECK_EXCLUDE_PARAM"
 }
 
 Run_ShellCheck() {
-    echo "DEBUG: Shellcheck files"
-    find $SC_PARAM_DIR ! -name "$(printf "*\n*")" -name '*.sh' > tmp
+    SC_PARAM_PATTERN="${SC_PARAM_PATTERN:-"*.sh"}"
+    find $SC_PARAM_DIR ! -name "$(printf "*\n*")" -name "$SC_PARAM_PATTERN" > tmp
     set +e
     while IFS= read -r script
     do
@@ -22,7 +20,6 @@ Run_ShellCheck() {
 }
 
 Catch_SC_Errors() {
-    echo "DEBUG: Check for errors"
     if [ -s "$SC_PARAM_OUTPUT" ]; then
         printf '\e[1;31mShellCheck Errors Found\e[0m\n'
         cat "$SC_PARAM_OUTPUT"
