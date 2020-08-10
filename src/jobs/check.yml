@@ -42,7 +42,7 @@ parameters:
       different version tag.
   shell:
     type: string
-    default: "sh"
+    default: "bash"
     description: Shell language to check against.
 
 steps:
