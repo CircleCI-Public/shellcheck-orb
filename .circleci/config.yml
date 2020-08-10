@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   orb-tools: circleci/orb-tools@dev:orb-pack
+  bats: circleci/bats@1.0
   shellcheck: circleci/shellcheck@<<pipeline.parameters.dev-orb-version>>
 
 parameters:
@@ -49,10 +50,14 @@ workflows:
           requires:
             - orb-tools/lint
 
+      - bats/run:
+          path: src/tests
+
       - orb-tools/publish-dev:
           orb-name: circleci/shellcheck
           requires:
             - orb-tools/pack
+            - bats/run
 
       - orb-tools/trigger-integration-tests-workflow:
           name: trigger-integration-dev
