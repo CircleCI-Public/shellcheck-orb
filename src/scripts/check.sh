@@ -44,8 +44,8 @@ SC_Main() {
     Catch_SC_Errors
 }
 
-# Will not run if sourced from another script. This is done so this script may be tested.
+# Will not run if sourced for bats.
 # View src/tests for more information.
-if [[ "$(basename -- "$0")" != "check.sh" ]]; then
+if [[ "$0" != "*bats*" ]]; then
     SC_Main
 fi
