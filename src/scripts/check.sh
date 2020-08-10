@@ -23,17 +23,12 @@ Run_ShellCheck() {
 
 Catch_SC_Errors() {
     echo "DEBUG: Check for errors"
-    RED='\e[1;31m'
-    GREEN='\e[1;32m'
-    NC='\e[0m' # No Color
     if [ -s "$SC_PARAM_OUTPUT" ]; then
-        # shellcheck disable=SC2059
-        printf "${RED}ShellCheck Errors Found${NC}\n"
+        printf '\e[1;31mShellCheck Errors Found\e[0m\n'
         cat "$SC_PARAM_OUTPUT"
         exit 1
     else
-        # shellcheck disable=SC2059
-        printf "${GREEN}No ShellCheck Errors Found${NC}\n"
+        printf '\e[1;32mNo ShellCheck Errors Found\e[0m\n'
     fi
 }
 
@@ -44,8 +39,11 @@ SC_Main() {
     Catch_SC_Errors
 }
 
+
 # Will not run if sourced for bats.
 # View src/tests for more information.
-if [[ "$0" != "*bats*" ]]; then
+TEST_ENV="bats-core"
+if [ "${0#*$TEST_ENV}" == "$0" ]; then
+    echo "DEBUG: execution was not escaped"
     SC_Main
 fi
