@@ -43,9 +43,9 @@ SC_Main() {
     Run_ShellCheck
     Catch_SC_Errors
 }
+
 # Will not run if sourced from another script. This is done so this script may be tested.
 # View src/tests for more information.
-if [[ "$_" == "$0" ]]; then
-    echo "DEBUG: Executed"
+if [[ "$(basename -- "$0")" != "check.sh" ]]; then
     SC_Main
 fi
