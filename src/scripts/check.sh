@@ -11,11 +11,11 @@ Set_SHELLCHECK_EXCLUDE_PARAM() {
 
 Run_ShellCheck() {
     echo "DEBUG: Shellcheck files"
-    find "$SC_PARAM_DIR" ! -name "$(printf "*\n*")" -name '*.sh' > tmp
+    find $SC_PARAM_DIR ! -name "$(printf "*\n*")" -name '*.sh' > tmp
     set +e
     while IFS= read -r script
     do
-        shellcheck "$SHELLCHECK_EXCLUDE_PARAM" --severity="$SC_PARAM_SEVERITY" "$script" >>"$SC_PARAM_OUTPUT"
+        shellcheck $SHELLCHECK_EXCLUDE_PARAM --severity=$SC_PARAM_SEVERITY "$script" >>"$SC_PARAM_OUTPUT"
     done < tmp
     set -eo pipefail
     rm tmp
