@@ -62,6 +62,7 @@ workflows:
   integration-tests_prod-release:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
+      - shellcheck/check
       - integration-test_full:
           matrix:
             parameters:
