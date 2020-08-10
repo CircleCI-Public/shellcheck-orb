@@ -82,6 +82,7 @@ workflows:
           publish-version-tag: true
           ssh-fingerprints: 40:21:b7:d7:fe:ea:dd:80:ca:c8:34:7a:37:b4:b4:d2
           requires:
+            - shellcheck/check
             - integration-test_full
           filters:
             branches:
