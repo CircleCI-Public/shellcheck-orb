@@ -37,7 +37,7 @@ jobs:
           name: Verify Shellcheck install
           command: shellcheck -V
       - shellcheck/check:
-          exclude: SC2148,SC2038
+          exclude: SC2148,SC2038,SC2086
 
 workflows:
   # This `lint-pack_validate_publish-dev` workflow will run on any commit.
@@ -62,7 +62,8 @@ workflows:
   integration-tests_prod-release:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
-      - shellcheck/check
+      - shellcheck/check:
+          exclude: SC2148,SC2038,SC2086
       - integration-test_full:
           matrix:
             parameters:

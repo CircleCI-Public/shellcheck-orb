@@ -15,7 +15,7 @@ Run_ShellCheck() {
     set +e
     while IFS= read -r script
     do
-        shellcheck $SHELLCHECK_EXCLUDE_PARAM --severity=$SC_PARAM_SEVERITY "$script" >>"$SC_PARAM_OUTPUT"
+        shellcheck $SHELLCHECK_EXCLUDE_PARAM --shell=$SC_PARAM_SHELL --severity=$SC_PARAM_SEVERITY "$script" >>"$SC_PARAM_OUTPUT"
     done < tmp
     set -eo pipefail
     rm tmp

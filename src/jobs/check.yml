@@ -34,13 +34,16 @@ parameters:
     description: |
       The filename of the shellcheck output, which is automatically saved
       as a job artifact
-
   executor:
     type: executor
     default: default
     description: |
       Override executor with a custom executor, for example, to choose a
       different version tag.
+  shell:
+    type: string
+    default: "sh"
+    description: Shell language to check against.
 
 steps:
   - checkout
@@ -50,3 +53,4 @@ steps:
       severity: <<parameters.severity>>
       format: <<parameters.format>>
       output: <<parameters.output>>
+      shell: <<parameters.shell>>

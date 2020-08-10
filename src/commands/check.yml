@@ -30,6 +30,10 @@ parameters:
     description: |
       The filename of the shellcheck output, which is automatically saved
       as a job artifact
+  shell:
+    type: string
+    default: "sh"
+    description: Shell language to check against.
 
 steps:
   - run:
@@ -39,6 +43,7 @@ steps:
         SC_PARAM_DIR: <<parameters.dir>>
         SC_PARAM_SEVERITY: <<parameters.severity>>
         SC_PARAM_OUTPUT: <<parameters.output>>
+        SC_PARAM_SHELL: <<parameters.shell>>
       command: << include(scripts/check.sh) >>
 
   - store_artifacts:
