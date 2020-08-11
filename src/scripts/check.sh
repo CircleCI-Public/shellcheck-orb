@@ -9,14 +9,14 @@ Set_SHELLCHECK_EXCLUDE_PARAM() {
 
 Run_ShellCheck() {
     SC_PARAM_PATTERN="${SC_PARAM_PATTERN:-"*.sh"}"
-    find $SC_PARAM_DIR ! -name "$(printf "*\n*")" -name "$SC_PARAM_PATTERN" > tmp
+    find "$SC_PARAM_DIR" ! -name "$(printf "*\n*")" -name "$SC_PARAM_PATTERN" > tmp
     set +e
     while IFS= read -r script
     do
-        shellcheck $SHELLCHECK_EXCLUDE_PARAM --shell=$SC_PARAM_SHELL --severity=$SC_PARAM_SEVERITY "$script" >>"$SC_PARAM_OUTPUT"
+        # shellcheck disable=SC2086
+        shellcheck $SHELLCHECK_EXCLUDE_PARAM --shell=$SC_PARAM_SHELL --severity=$SC_PARAM_SEVERITY "$script" >> $SC_PARAM_OUTPUT
     done < tmp
     set -eo pipefail
-    rm tmp
 }
 
 Catch_SC_Errors() {
@@ -30,10 +30,10 @@ Catch_SC_Errors() {
 }
 
 SC_Main() {
-    echo "DEBUG: Starting"
     Set_SHELLCHECK_EXCLUDE_PARAM
     Run_ShellCheck
     Catch_SC_Errors
+    rm tmp
 }
 
 
@@ -41,6 +41,5 @@ SC_Main() {
 # View src/tests for more information.
 TEST_ENV="bats-core"
 if [ "${0#*$TEST_ENV}" == "$0" ]; then
-    echo "DEBUG: execution was not escaped"
     SC_Main
 fi
