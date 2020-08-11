@@ -51,6 +51,8 @@ workflows:
             - orb-tools/lint
 
       - bats/run:
+          setup-steps:
+            - shellcheck/install
           path: src/tests
 
       - orb-tools/publish-dev:
