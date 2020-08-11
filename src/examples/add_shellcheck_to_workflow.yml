@@ -1,0 +1,16 @@
+description: |
+  Easily integrate shellcheck into an existing workflow. Add the "check" job and provide any optional parameters desired.
+
+usage:
+  version: 2.1
+
+  orbs:
+    shellcheck: circleci/shellcheck@2.0.0
+
+  workflows:
+    my_workflow:
+      jobs:
+        - shellcheck/check:
+            dir: ./myScripts
+            exclude: "SC2148"
+
