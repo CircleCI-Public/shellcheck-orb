@@ -71,6 +71,7 @@ workflows:
     jobs:
       - shellcheck/check:
           exclude: SC2148,SC2038,SC2086
+          dir: ./src/scripts
       - integration-test_full:
           matrix:
             parameters:
