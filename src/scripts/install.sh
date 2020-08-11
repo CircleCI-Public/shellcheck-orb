@@ -12,8 +12,9 @@ if  grep Debian /etc/issue > /dev/null 2>&1 || grep Ubuntu /etc/issue > /dev/nul
     if [[ $EUID == 0 ]]; then export SUDO=""; else # Check if we're root
         export SUDO="sudo";
     fi
+    echo "DEBUG https://github.com/koalaman/shellcheck/releases/download/v${SC_INSTALL_VERSION}shellcheck-v${SC_INSTALL_VERSION}.linux.x86_64.tar.xz"
     # shellcheck disable=SC2086
-    wget -qO- https://github.com/koalaman/shellcheck/releases/download/v${SC_INSTALL_VERSION}shellcheck-v${SC_INSTALL_VERSION}.linux.x86_64.tar.xz | tar -xJf -
+    wget -qO- "https://github.com/koalaman/shellcheck/releases/download/v${SC_INSTALL_VERSION}shellcheck-v${SC_INSTALL_VERSION}.linux.x86_64.tar.xz" | tar -xJf -
     cd "shellcheck-v$SC_INSTALL_VERSION/" || false
     $SUDO cp shellcheck /usr/local/bin
     exit $?
@@ -24,7 +25,7 @@ if grep Arch /etc/issue > /dev/null 2>&1; then
         export SUDO="sudo";
     fi
     # shellcheck disable=SC2086
-    wget -qO- https://github.com/koalaman/shellcheck/releases/download/v$SC_INSTALL_VERSIONshellcheck-v${SC_INSTALL_VERSION}.linux.aarch64.tar.xz | tar -xJf -
+    wget -qO- "https://github.com/koalaman/shellcheck/releases/download/v$SC_INSTALL_VERSIONshellcheck-v${SC_INSTALL_VERSION}.linux.aarch64.tar.xz" | tar -xJf -
     cd "shellcheck-v$SC_INSTALL_VERSION/" || false
     $SUDO cp shellcheck /usr/local/bin
     exit $?
