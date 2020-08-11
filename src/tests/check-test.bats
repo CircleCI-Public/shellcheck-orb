@@ -2,6 +2,7 @@ setup() {
     source ./src/scripts/check.sh
     export SC_PARAM_OUTPUT="/tmp/shellcheck.log"
     export SC_PARAM_SHELL="bash"
+    Check_for_shellcheck
 }
 
 teardown() {
@@ -14,7 +15,6 @@ teardown() {
     export SC_PARAM_DIR="src/scripts"
     export SC_PARAM_SEVERITY="style"
     export SC_PARAM_EXCLUDE="SC2148,SC2038,SC2059"
-    Check_for_shellcheck
     Set_SHELLCHECK_EXCLUDE_PARAM
     Run_ShellCheck
     # Test that 2 scripts were found
@@ -26,7 +26,6 @@ teardown() {
     export SC_PARAM_DIR="src/tests/test_data"
     export SC_PARAM_SEVERITY="style"
     export SC_PARAM_EXCLUDE="SC2148,SC2038,SC2059"
-    Check_for_shellcheck
     Set_SHELLCHECK_EXCLUDE_PARAM
     SC_PARAM_PATTERN="*.fake"
     Run_ShellCheck
@@ -38,7 +37,6 @@ teardown() {
 @test "3: Shellcheck test - Fail on error" {
     export SC_PARAM_DIR="src/tests/test_data"
     export SC_PARAM_SEVERITY="style"
-    Check_for_shellcheck
     Set_SHELLCHECK_EXCLUDE_PARAM
     Run_ShellCheck
     run Catch_SC_Errors
@@ -50,7 +48,6 @@ teardown() {
     export SC_PARAM_DIR="src/tests/test_data"
     export SC_PARAM_SEVERITY="style"
     export SC_PARAM_EXCLUDE="SC2006,SC2116,SC2034"
-    Check_for_shellcheck
     Set_SHELLCHECK_EXCLUDE_PARAM
     Run_ShellCheck
     run Catch_SC_Errors
