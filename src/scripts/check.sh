@@ -14,6 +14,7 @@ Run_ShellCheck() {
     while IFS= read -r script
     do
         # shellcheck disable=SC2086
+        echo 'shellcheck $SHELLCHECK_EXCLUDE_PARAM --shell=$SC_PARAM_SHELL --severity=$SC_PARAM_SEVERITY "$script" >> $SC_PARAM_OUTPUT'
         shellcheck $SHELLCHECK_EXCLUDE_PARAM --shell=$SC_PARAM_SHELL --severity=$SC_PARAM_SEVERITY "$script" >> $SC_PARAM_OUTPUT
     done < tmp
     set -eo pipefail
