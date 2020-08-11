@@ -36,6 +36,7 @@ teardown() {
 @test "3: Shellcheck test - Fail on error" {
     export SC_PARAM_DIR="src/tests/test_data"
     export SC_PARAM_SEVERITY="style"
+    Set_SHELLCHECK_EXCLUDE_PARAM
     Run_ShellCheck
     run Catch_SC_Errors
     [ "$status" == 1 ]
