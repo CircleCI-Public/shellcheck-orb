@@ -1,5 +1,5 @@
 #!/bin/bash
 
-echo "This is a sample script with a custom extension"
+echo "This script contains shellchecking errors"
 # Error SC2006
 testme=`echo hello`
