@@ -1,5 +1,5 @@
 if echo "$OSTYPE "| grep darwin > /dev/null 2>&1; then
-    brew install shellcheck
+    brew install "shellcheck@$SC_INSTALL_VERSION"
     exit $?
 fi
 
@@ -12,21 +12,19 @@ if  grep Debian /etc/issue > /dev/null 2>&1 || grep Ubuntu /etc/issue > /dev/nul
     if [[ $EUID == 0 ]]; then export SUDO=""; else # Check if we're root
         export SUDO="sudo";
     fi
-    # This is currently installing an outdated version of Shellcheck.
-    # $SUDO apt update
-    # $SUDO apt install -y shellcheck
-    wget -qO- https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz | tar -xJf -
-    cd shellcheck-v0.7.1/ || false
+    wget -qO- https://github.com/koalaman/shellcheck/releases/download/v$SC_INSTALL_VERSIONshellcheck-v$SC_INSTALL_VERSION.linux.x86_64.tar.xz | tar -xJf -
+    cd "shellcheck-v$SC_INSTALL_VERSION/" || false
     $SUDO cp shellcheck /usr/local/bin
-    echo $?
+    exit $?
 fi
 
 if grep Arch /etc/issue > /dev/null 2>&1; then
     if [[ $EUID == 0 ]]; then export SUDO=""; else # Check if we're root
         export SUDO="sudo";
     fi
-    $SUDO pacman -Sy
-    $SUDO pacman -S shellcheck
+    wget -qO- https://github.com/koalaman/shellcheck/releases/download/v$SC_INSTALL_VERSIONshellcheck-v$SC_INSTALL_VERSION.linux.aarch64.tar.xz | tar -xJf -
+    cd "shellcheck-v$SC_INSTALL_VERSION/" || false
+    $SUDO cp shellcheck /usr/local/bin
     exit $?
 fi
 # @TODO: Add Windows support.
