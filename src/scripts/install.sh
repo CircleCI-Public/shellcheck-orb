@@ -1,6 +1,6 @@
 if echo "$OSTYPE "| grep darwin > /dev/null 2>&1; then
     # shellcheck disable=SC2086
-    wget -qO- "https://github.com/koalaman/shellcheck/releases/download/v${SC_INSTALL_VERSION}/shellcheck-v${SC_INSTALL_VERSION}.darwin.x86_64.tar.xz" | tar -xJf -
+    curl -OL "https://github.com/koalaman/shellcheck/releases/download/v${SC_INSTALL_VERSION}/shellcheck-v${SC_INSTALL_VERSION}.darwin.x86_64.tar.xz" | tar -xJf -
     cd "shellcheck-v$SC_INSTALL_VERSION/" || false
     $SUDO cp shellcheck /usr/local/bin
     exit $?
