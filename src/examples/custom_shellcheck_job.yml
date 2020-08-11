@@ -10,7 +10,7 @@ usage:
   jobs:
     my_job:
       docker:
-        - cimg/base:stable
+        - image: cimg/base:stable
       steps:
         - checkout
         - shellcheck/install
