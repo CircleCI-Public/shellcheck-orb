@@ -1,7 +1,7 @@
 
 Set_SHELLCHECK_EXCLUDE_PARAM() {
     if [ -n "$SC_PARAM_EXCLUDE" ]; then
-        SHELLCHECK_EXCLUDE_PARAM="--exclude=$SC_PARAM_EXCLUDE"
+        SHELLCHECK_EXCLUDE_PARAM="--exclude=$SC_PARAM_EXCLUDE "
     else
         SHELLCHECK_EXCLUDE_PARAM=""
     fi
@@ -13,8 +13,8 @@ Run_ShellCheck() {
     set +e
     while IFS= read -r script
     do
-        echo "shellcheck $SHELLCHECK_EXCLUDE_PARAM --shell=$SC_PARAM_SHELL --severity=$SC_PARAM_SEVERITY $script >> $SC_PARAM_OUTPUT"
-        echo $(which shellcheck)
+        echo "shellcheck $SHELLCHECK_EXCLUDE_PARAM--shell=$SC_PARAM_SHELL --severity=$SC_PARAM_SEVERITY $script >> $SC_PARAM_OUTPUT"
+        which shellcheck
         # shellcheck disable=SC2086
         shellcheck $SHELLCHECK_EXCLUDE_PARAM --shell=$SC_PARAM_SHELL --severity=$SC_PARAM_SEVERITY "$script" >> $SC_PARAM_OUTPUT
     done < tmp
