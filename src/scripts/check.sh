@@ -7,6 +7,14 @@ Set_SHELLCHECK_EXCLUDE_PARAM() {
     fi
 }
 
+Check_for_shellcheck() {
+    if ! command -v shellcheck &> /dev/null
+    then
+        echo "Shellcheck not installed"
+        exit
+    fi
+}
+
 Run_ShellCheck() {
     SC_PARAM_PATTERN="${SC_PARAM_PATTERN:-"*.sh"}"
     find "$SC_PARAM_DIR" ! -name "$(printf "*\n*")" -name "$SC_PARAM_PATTERN" > tmp
@@ -32,6 +40,7 @@ Catch_SC_Errors() {
 }
 
 SC_Main() {
+    Check_for_shellcheck
     Set_SHELLCHECK_EXCLUDE_PARAM
     Run_ShellCheck
     Catch_SC_Errors
