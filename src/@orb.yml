@@ -1,8 +1,7 @@
 version: 2.1
 
 description: |
-  ShellCheck, a static analysis tool for shell scripts.
-  Check all scripts in your repository using `shellcheck` on every commit.
+  Automatically find bugs and errors in your shell scripts with ‘shellcheck’ on every commit. Add this static analysis tool to any CI/CD workflow and shellcheck your scripts across your repository.
 
 display:
   source_url: https://github.com/circleci-public/shellcheck-orb
