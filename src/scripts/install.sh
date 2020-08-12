@@ -1,6 +1,11 @@
 if echo "$OSTYPE "| grep darwin > /dev/null 2>&1; then
+    if [[ $EUID == 0 ]]; then export SUDO=""; else # Check if we're root
+        export SUDO="sudo";
+    fi
     # shellcheck disable=SC2086
-    curl -OL "https://github.com/koalaman/shellcheck/releases/download/v${SC_INSTALL_VERSION}/shellcheck-v${SC_INSTALL_VERSION}.darwin.x86_64.tar.xz" | tar -xJf -
+    SC_DOWNLOAD_MAC="https://github.com/koalaman/shellcheck/releases/download/v${SC_INSTALL_VERSION}/shellcheck-v${SC_INSTALL_VERSION}.darwin.x86_64.tar.xz"
+    curl -LJO "shellcheck-v$SC_INSTALL_VERSION" "$SC_DOWNLOAD_MAC"
+    tar -xvf "shellcheck-v$SC_INSTALL_VERSION.darwin.x86_64.tar.xz"
     cd "shellcheck-v$SC_INSTALL_VERSION/" || false
     $SUDO cp shellcheck /usr/local/bin
     exit $?
