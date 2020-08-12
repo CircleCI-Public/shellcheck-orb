@@ -4,7 +4,7 @@ description: |
   in your repository using the official Kolalaman Shellcheck Docker image.
 
 docker:
-  - image: koalaman/shellcheck:<<parameters.version>>
+  - image: koalaman/shellcheck-alpine:<<parameters.version>>
 
 parameters:
   exclude:
