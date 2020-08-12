@@ -1,7 +1,15 @@
 description: >
   Install Shellcheck.
 
+parameters:
+  version:
+    description: Select the tagged release version of Shellcheck to install.
+    default: "0.7.1"
+    type: string
+
 steps:
   - run:
       name: Install Shellcheck
+      environment:
+        SC_INSTALL_VERSION: <<parameters.version>>
       command: << include(scripts/install.sh) >>

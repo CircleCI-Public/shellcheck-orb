@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   orb-tools: circleci/orb-tools@dev:orb-pack
+  bats: circleci/bats@1.0
   shellcheck: circleci/shellcheck@<<pipeline.parameters.dev-orb-version>>
 
 parameters:
@@ -12,31 +13,33 @@ parameters:
     type: string
     default: "dev:alpha"
 
-jobs:
-  integration-test_install-debian:
+executors:
+  debian:
     docker:
       - image: cimg/base:edge
-    steps:
-      - shellcheck/install
-      - run:
-          name: Verify Shellcheck install
-          command: shellcheck -V
-  integration-test_install-alpine:
+  alpine:
     docker:
       - image: alpine
-    steps:
-      - shellcheck/install
-      - run:
-          name: Verify Shellcheck install
-          command: shellcheck -V
-  integration-test_install-macos:
+  mac:
     macos:
       xcode: "11.6.0"
+
+jobs:
+  integration-test_full:
+    parameters:
+      env:
+        type: executor
+        default: debian
+    executor: <<parameters.env>>
     steps:
+      - checkout
       - shellcheck/install
       - run:
           name: Verify Shellcheck install
           command: shellcheck -V
+      - shellcheck/check:
+          exclude: SC2148,SC2038,SC2086
+          dir: ./src/scripts
 
 workflows:
   # This `lint-pack_validate_publish-dev` workflow will run on any commit.
@@ -48,10 +51,16 @@ workflows:
           requires:
             - orb-tools/lint
 
+      - bats/run:
+          setup-steps:
+            - shellcheck/install
+          path: src/tests
+
       - orb-tools/publish-dev:
           orb-name: circleci/shellcheck
           requires:
             - orb-tools/pack
+            - bats/run
 
       - orb-tools/trigger-integration-tests-workflow:
           name: trigger-integration-dev
@@ -61,9 +70,16 @@ workflows:
   integration-tests_prod-release:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
-      - integration-test_install-debian
-      - integration-test_install-alpine
-      - integration-test_install-macos
+      - shellcheck/check:
+          exclude: SC2148,SC2038,SC2086
+          dir: ./src/scripts
+      - integration-test_full:
+          matrix:
+            parameters:
+              env:
+                - debian
+                - mac
+                - alpine
 
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: circleci/shellcheck
@@ -75,9 +91,8 @@ workflows:
           publish-version-tag: true
           ssh-fingerprints: 40:21:b7:d7:fe:ea:dd:80:ca:c8:34:7a:37:b4:b4:d2
           requires:
-            - integration-test_install-debian
-            - integration-test_install-alpine
-            - integration-test_install-macos
+            - shellcheck/check
+            - integration-test_full
           filters:
             branches:
               only: master
