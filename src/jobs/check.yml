@@ -1,9 +1,10 @@
 description: |
   Run shellcheck over any shell scripts in the respository.
   Add this job to any workflow to automatically check any shell scripts
-  in your repository.
+  in your repository using the official Kolalaman Shellcheck Docker image.
 
-executor: <<parameters.executor>>
+docker:
+  - image: koalaman/shellcheck:<<parameters.version>>
 
 parameters:
   exclude:
@@ -34,12 +35,12 @@ parameters:
     description: |
       The filename of the shellcheck output, which is automatically saved
       as a job artifact
-  executor:
-    type: executor
-    default: default
+  version:
+    type: string
+    default: "v0.7.1"
     description: |
-      Override executor with a custom executor, for example, to choose a
-      different version tag.
+      Override the Docker tag for this image. Find available tags here: https://hub.docker.com/r/koalaman/shellcheck/tags
+      If a custom execution environment is needed, use the "install" command in a custom job.
   shell:
     type: string
     default: "bash"
