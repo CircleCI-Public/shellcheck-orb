@@ -1,151 +1,98 @@
 version: 2.1
 
 orbs:
-  shellcheck: circleci/shellcheck@dev:alpha
+  orb-tools: circleci/orb-tools@dev:orb-pack
+  bats: circleci/bats@1.0
+  shellcheck: circleci/shellcheck@<<pipeline.parameters.dev-orb-version>>
+
+parameters:
+  run-integration-tests:
+    type: boolean
+    default: false
+  dev-orb-version:
+    type: string
+    default: "dev:alpha"
 
 executors:
-  cli:
-    resource_class: small
+  debian:
     docker:
-      - image: circleci/circleci-cli
-
-  lint:
-    resource_class: small
+      - image: cimg/base:edge
+  alpine:
     docker:
-      - image: singapore/lint-condo
-
-  github:
-    resource_class: small
-    docker:
-      - image: cibuilds/github
+      - image: alpine
+  mac:
+    macos:
+      xcode: "11.6.0"
 
 jobs:
-  lint:
-    executor: lint
-    steps:
-      - checkout
-      - run: yamllint .
-
-  validate:
-    executor: cli
-    steps:
-      - checkout
-      - run: circleci orb validate src/@orb.yml
-
-  publish-dev:
-    executor: cli
-    steps:
-      - checkout
-
-      - run:
-          name: publish dev versions
-          command: |
-            # for integration testing
-            circleci orb publish src/@orb.yml circleci/shellcheck@dev:alpha --token $CIRCLE_TOKEN
-
-            # for transparency
-            circleci orb publish src/@orb.yml circleci/shellcheck@dev:$CIRCLE_BRANCH-${CIRCLE_SHA1:0:7} --token $CIRCLE_TOKEN
-
-            # for potentially promoting to prod
-            circleci orb publish src/@orb.yml circleci/shellcheck@dev:${CIRCLE_SHA1:0:7} --token $CIRCLE_TOKEN
-
-  trigger-integration:
-    executor: github
+  integration-test_full:
     parameters:
-      tag:
-        type: enum
-        default: "integration"
-        enum: ["integration", master]
+      env:
+        type: executor
+        default: debian
+    executor: <<parameters.env>>
     steps:
       - checkout
-
-      - add_ssh_keys:
-          fingerprints:
-            - "40:21:b7:d7:fe:ea:dd:80:ca:c8:34:7a:37:b4:b4:d2"
-
+      - shellcheck/install
       - run:
-          name: git config
-          command: |
-            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
-            git config --global user.name "$CIRCLE_USERNAME"
-
-      - run: |
-          INTEGRATION_TAG=<<parameters.tag>>-$CIRCLE_BRANCH-${CIRCLE_SHA1:0:7}
-          git tag $INTEGRATION_TAG
-          git push origin $INTEGRATION_TAG
-
-  dev-promote-prod:
-    executor: cli
-    steps:
-      - run: circleci orb publish promote circleci/shellcheck@dev:${CIRCLE_SHA1:0:7} patch --token $CIRCLE_TOKEN
-
-integration-dev_filters: &integration-dev_filters
-  branches:
-    ignore: /.*/
-  tags:
-    only: /integration-.*/
-
-integration-master_filters: &integration-master_filters
-  branches:
-    ignore: /.*/
-  tags:
-    only: /master-.*/
-
-add-ssh-keys: &add-ssh-keys
-  [run: "apk add git openssh", add_ssh_keys: {fingerprints: ["40:21:b7:d7:fe:ea:dd:80:ca:c8:34:7a:37:b4:b4:d2"]}]
-
-cleanup-git-tag: &cleanup-git-tag
-  [run: {when: "always", name: "cleanup tag", command: "git config --global user.email $CIRCLE_USERNAME@users.noreply.github.com && git config --global user.name $CIRCLE_USERNAME && git push --delete origin $CIRCLE_TAG"}]
+          name: Verify Shellcheck install
+          command: shellcheck -V
+      - shellcheck/check:
+          exclude: SC2148,SC2038,SC2086
+          dir: ./src/scripts
 
 workflows:
-  validate_dev-deploy:
+  # This `lint-pack_validate_publish-dev` workflow will run on any commit.
+  lint_pack-validate_publish-dev:
+    unless: << pipeline.parameters.run-integration-tests >>
     jobs:
-      - lint
-
-      - validate:
+      - orb-tools/lint
+      - orb-tools/pack:
           requires:
-            - lint
+            - orb-tools/lint
 
-      - publish-dev:
+      - bats/run:
+          setup-steps:
+            - shellcheck/install
+          path: src/tests
+
+      - orb-tools/publish-dev:
+          orb-name: circleci/shellcheck
           requires:
-            - validate
-          context: orb-publishing
+            - orb-tools/pack
+            - bats/run
 
-      - trigger-integration:
+      - orb-tools/trigger-integration-tests-workflow:
           name: trigger-integration-dev
           requires:
-            - publish-dev
-          filters:
-            branches:
-              ignore: master
+            - orb-tools/publish-dev
 
-      - trigger-integration:
-          name: trigger-integration-master
-          tag: master
+  integration-tests_prod-release:
+    when: << pipeline.parameters.run-integration-tests >>
+    jobs:
+      - shellcheck/check:
+          exclude: SC2148,SC2038,SC2086
+          dir: ./src/scripts
+      - integration-test_full:
+          matrix:
+            parameters:
+              env:
+                - debian
+                - mac
+                - alpine
+
+      - orb-tools/dev-promote-prod-from-commit-subject:
+          orb-name: circleci/shellcheck
+          context: orb-publishing
+          add-pr-comment: true
+          bot-token-variable: GHI_TOKEN
+          bot-user: cpe-bot
+          fail-if-semver-not-indicated: true
+          publish-version-tag: true
+          ssh-fingerprints: 40:21:b7:d7:fe:ea:dd:80:ca:c8:34:7a:37:b4:b4:d2
           requires:
-            - publish-dev
+            - shellcheck/check
+            - integration-test_full
           filters:
             branches:
               only: master
-
-  integration_test-prod_deploy:
-    jobs:
-      # triggered by non-master branch commits
-      - shellcheck/check:
-          name: shellcheck-check_dev
-          pre-steps: *add-ssh-keys
-          filters: *integration-dev_filters
-          post-steps: *cleanup-git-tag
-
-      # triggered by master branch commits
-      - shellcheck/check:
-          name: shellcheck-check_master
-          pre-steps: *add-ssh-keys
-          filters: *integration-master_filters
-          post-steps: *cleanup-git-tag
-
-      - dev-promote-prod:
-          context: orb-publishing
-          filters: *integration-master_filters
-          requires:
-            - shellcheck-check_master

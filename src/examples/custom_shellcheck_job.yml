@@ -1,0 +1,27 @@
+description: |
+  Install the Shellcheck CLI into your CI environment.
+
+usage:
+  version: 2.1
+
+  orbs:
+    shellcheck: circleci/shellcheck@2.0.0
+
+  jobs:
+    my_job:
+      docker:
+        - image: cimg/base:stable
+      steps:
+        - checkout
+        - shellcheck/install
+        - run:
+            name: Run Shellcheck command
+            command: shellcheck <options>
+
+  workflows:
+    my_workflow:
+      jobs:
+        - shellcheck/check:
+            dir: ./myScripts
+            exclude: "SC2148"
+

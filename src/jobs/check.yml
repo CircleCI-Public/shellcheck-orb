@@ -1,0 +1,64 @@
+description: |
+  Run shellcheck over any shell scripts in the respository.
+  Add this job to any workflow to automatically check any shell scripts
+  in your repository using the official Kolalaman Shellcheck Docker image.
+
+docker:
+  - image: koalaman/shellcheck-alpine:<<parameters.version>>
+
+parameters:
+  exclude:
+    description: >
+      A comma separated list of SC codes to explicity ignore. Example: "SC1000,SC1001"
+    type: string
+    default: ""
+  dir:
+    description: >
+      Specify the root path containing the shell scripts. The directory will be recursively searched.
+    type: string
+    default: "."
+  severity:
+    description: >
+      Specify minimum severity of errors to consider. Valid values in order of severity are error, warning, info and style.
+    enum: ["error", "warning", "info", "style"]
+    type: enum
+    default: "style"
+  format:
+    description: >
+      Specify the output format of shellcheck. Valid values include: "tty", "gcc", "checkstyle", "diff", "json1", "json", "quiet"
+    enum: ["tty", "gcc", "checkstyle", "diff", "json1", "json", "quiet"]
+    default: "tty"
+    type: enum
+  output:
+    type: string
+    default: shellcheck.log
+    description: |
+      The filename of the shellcheck output, which is automatically saved
+      as a job artifact
+  version:
+    type: string
+    default: "v0.7.1"
+    description: |
+      Override the Docker tag for this image. Find available tags here: https://hub.docker.com/r/koalaman/shellcheck/tags
+      If a custom execution environment is needed, use the "install" command in a custom job.
+  shell:
+    type: string
+    default: "bash"
+    description: Shell language to check against.
+  pattern:
+    type: string
+    default: ""
+    description: The file pattern to search for. By default will search for "*.sh"
+
+
+steps:
+  - checkout
+  - check:
+      exclude: <<parameters.exclude>>
+      dir: <<parameters.dir>>
+      severity: <<parameters.severity>>
+      format: <<parameters.format>>
+      output: <<parameters.output>>
+      shell: <<parameters.shell>>
+      pattern: <<parameters.pattern>>
+

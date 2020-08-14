@@ -1,0 +1,56 @@
+description: >
+  Scan files in directory matching pattern.
+
+parameters:
+  exclude:
+    description: >
+      A comma separated list of SC codes to explicitylu ignore. Example: "SC1000,SC1001"
+    type: string
+    default: ""
+  dir:
+    description: >
+      Specify the root path containing the shell scripts. The directory will be recursively searched.
+    type: string
+    default: "."
+  severity:
+    description: >
+      Specify minimum severity of errors to consider. Valid values in order of severity are error, warning, info and style.
+    enum: ["error", "warning", "info", "style"]
+    type: enum
+    default: "style"
+  format:
+    description: >
+      Specify the output format of shellcheck. Valid values include: "tty", "gcc", "checkstyle", "diff", "json1", "json", "quiet"
+    enum: ["tty", "gcc", "checkstyle", "diff", "json1", "json", "quiet"]
+    default: "tty"
+    type: enum
+  output:
+    type: string
+    default: shellcheck.log
+    description: |
+      The filename of the shellcheck output, which is automatically saved
+      as a job artifact
+  shell:
+    type: string
+    default: "bash"
+    description: Shell language to check against.
+  pattern:
+    type: string
+    default: ""
+    description: The file pattern to search for. By default will search for "*.sh"
+
+steps:
+  - run:
+      name: Run Shellcheck
+      environment:
+        SC_PARAM_EXCLUDE: <<parameters.exclude>>
+        SC_PARAM_DIR: <<parameters.dir>>
+        SC_PARAM_SEVERITY: <<parameters.severity>>
+        SC_PARAM_OUTPUT: <<parameters.output>>
+        SC_PARAM_SHELL: <<parameters.shell>>
+        SC_PARAM_PATTERN: <<parameters.pattern>>
+      command: << include(scripts/check.sh) >>
+
+  - store_artifacts:
+      path: <<parameters.output>>
+      destination: shellcheck
