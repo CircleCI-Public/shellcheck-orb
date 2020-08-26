@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  orb-tools: circleci/orb-tools@dev:orb-pack
+  orb-tools: circleci/orb-tools@10.0
   bats: circleci/bats@1.0
   shellcheck: circleci/shellcheck@<<pipeline.parameters.dev-orb-version>>
 
