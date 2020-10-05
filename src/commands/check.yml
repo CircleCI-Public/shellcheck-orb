@@ -46,6 +46,7 @@ steps:
         SC_PARAM_EXCLUDE: <<parameters.exclude>>
         SC_PARAM_DIR: <<parameters.dir>>
         SC_PARAM_SEVERITY: <<parameters.severity>>
+        SC_PARAM_FORMAT: <<parameters.format>>
         SC_PARAM_OUTPUT: <<parameters.output>>
         SC_PARAM_SHELL: <<parameters.shell>>
         SC_PARAM_PATTERN: <<parameters.pattern>>
