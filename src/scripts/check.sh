@@ -7,6 +7,14 @@ Set_SHELLCHECK_EXCLUDE_PARAM() {
     fi
 }
 
+Set_SHELLCHECK_EXTERNAL_SOURCES_PARAM() {
+    if [ $SC_PARAM_EXTERNAL_SOURCES == "true" ]; then
+        SHELLCHECK_EXTERNAL_SOURCES="--external-sources"
+    else
+        SHELLCHECK_EXTERNAL_SOURCES=""
+    fi
+}
+
 Check_for_shellcheck() {
     if ! command -v shellcheck &> /dev/null
     then
@@ -21,7 +29,7 @@ Run_ShellCheck() {
     set +e
     while IFS= read -r script
     do
-        shellcheck "$SHELLCHECK_EXCLUDE_PARAM" --shell="$SC_PARAM_SHELL" --severity="$SC_PARAM_SEVERITY" --format="$SC_PARAM_FORMAT" "$script" >> "$SC_PARAM_OUTPUT"
+        shellcheck "$SHELLCHECK_EXCLUDE_PARAM" "$SHELLCHECK_EXTERNAL_SOURCES" --shell="$SC_PARAM_SHELL" --severity="$SC_PARAM_SEVERITY" --format="$SC_PARAM_FORMAT" "$script" >> "$SC_PARAM_OUTPUT"
     done < tmp
     set -eo pipefail
 }
@@ -39,6 +47,7 @@ Catch_SC_Errors() {
 SC_Main() {
     Check_for_shellcheck
     Set_SHELLCHECK_EXCLUDE_PARAM
+    Set_SHELLCHECK_EXTERNAL_SOURCES_PARAM
     Run_ShellCheck
     Catch_SC_Errors
     rm tmp
