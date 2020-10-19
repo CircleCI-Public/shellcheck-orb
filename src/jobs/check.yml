@@ -12,6 +12,11 @@ parameters:
       A comma separated list of SC codes to explicity ignore. Example: "SC1000,SC1001"
     type: string
     default: ""
+  external_sources:
+    description: >
+      Follow source statements even when the file is not specified as input.
+    type: boolean
+    default: false
   dir:
     description: >
       Specify the root path containing the shell scripts. The directory will be recursively searched.
@@ -55,6 +60,7 @@ steps:
   - checkout
   - check:
       exclude: <<parameters.exclude>>
+      external_sources: <<parameters.external_sources>>
       dir: <<parameters.dir>>
       severity: <<parameters.severity>>
       format: <<parameters.format>>
