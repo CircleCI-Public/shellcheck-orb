@@ -37,7 +37,7 @@ parameters:
       as a job artifact
   shell:
     type: string
-    default: "bash"
+    default: ""
     description: Shell language to check against.
   pattern:
     type: string
