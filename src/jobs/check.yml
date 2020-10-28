@@ -48,7 +48,7 @@ parameters:
       If a custom execution environment is needed, use the "install" command in a custom job.
   shell:
     type: string
-    default: "bash"
+    default: ""
     description: Shell language to check against.
   pattern:
     type: string
