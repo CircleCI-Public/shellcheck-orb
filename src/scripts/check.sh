@@ -8,7 +8,7 @@ Set_SHELLCHECK_EXCLUDE_PARAM() {
 }
 
 Set_SHELLCHECK_EXTERNAL_SOURCES_PARAM() {
-    if [ $SC_PARAM_EXTERNAL_SOURCES == "true" ]; then
+    if [ "$SC_PARAM_EXTERNAL_SOURCES" == "true" ]; then
         SHELLCHECK_EXTERNAL_SOURCES="--external-sources"
     else
         SHELLCHECK_EXTERNAL_SOURCES=""
