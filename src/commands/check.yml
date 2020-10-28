@@ -4,7 +4,7 @@ description: >
 parameters:
   exclude:
     description: >
-      A comma separated list of SC codes to explicitylu ignore. Example: "SC1000,SC1001"
+      A comma separated list of SC codes to explicitly ignore. Example: "SC1000,SC1001"
     type: string
     default: ""
   external_sources:
