@@ -1,7 +1,7 @@
 description: |
-  Run shellcheck over any shell scripts in the respository.
+  Run shellcheck over any shell scripts in the repository.
   Add this job to any workflow to automatically check any shell scripts
-  in your repository using the official Kolalaman Shellcheck Docker image.
+  in your repository using the official Koalaman Shellcheck Docker image.
 
 docker:
   - image: koalaman/shellcheck-alpine:<<parameters.version>>
@@ -9,7 +9,7 @@ docker:
 parameters:
   exclude:
     description: >
-      A comma separated list of SC codes to explicity ignore. Example: "SC1000,SC1001"
+      A comma separated list of SC codes to explicitly ignore. Example: "SC1000,SC1001"
     type: string
     default: ""
   external_sources:
