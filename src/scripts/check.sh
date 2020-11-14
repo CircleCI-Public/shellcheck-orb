@@ -33,12 +33,13 @@ Check_for_shellcheck() {
 
 Run_ShellCheck() {
     SC_PARAM_PATTERN="${SC_PARAM_PATTERN:-"*.sh"}"
-    find "$SC_PARAM_DIR" ! -name "$(printf "*\n*")" -name "$SC_PARAM_PATTERN" > tmp
+    sc_input_files=/tmp/sc-input-files
+    find "$SC_PARAM_DIR" ! -name "$(printf "*\n*")" -name "$SC_PARAM_PATTERN" > "$sc_input_files"
     set +e
     while IFS= read -r script
     do
         shellcheck "$SHELLCHECK_EXCLUDE_PARAM" "$SHELLCHECK_EXTERNAL_SOURCES" "$SHELLCHECK_SHELL_PARAM" --severity="$SC_PARAM_SEVERITY" --format="$SC_PARAM_FORMAT" "$script" >> "$SC_PARAM_OUTPUT"
-    done < tmp
+    done < "$sc_input_files"
     set -eo pipefail
 }
 
@@ -59,7 +60,7 @@ SC_Main() {
     Set_SHELLCHECK_SHELL_PARAM
     Run_ShellCheck
     Catch_SC_Errors
-    rm tmp
+    rm /tmp/sc-input-files
 }
 
 
