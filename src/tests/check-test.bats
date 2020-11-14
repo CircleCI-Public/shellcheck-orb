@@ -18,7 +18,7 @@ teardown() {
     Set_SHELLCHECK_EXCLUDE_PARAM
     Run_ShellCheck
     # Test that 2 scripts were found
-    [ $(wc -l /tmp/sc-inputs-files | awk '{print $1}') == 2 ]
+    [ $(wc -l /tmp/sc-input-files | awk '{print $1}') == 2 ]
 }
 
 # Esure Shellcheck is able to find files with custom patterns
