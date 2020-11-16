@@ -39,7 +39,7 @@ Run_ShellCheck() {
     while IFS= read -r script
     do
         shellcheck "$SHELLCHECK_EXCLUDE_PARAM" "$SHELLCHECK_EXTERNAL_SOURCES" "$SHELLCHECK_SHELL_PARAM" --severity="$SC_PARAM_SEVERITY" --format="$SC_PARAM_FORMAT" "$script" >> "$SC_PARAM_OUTPUT"
-    done < "{$SC_INPUT_FILES}"
+    done < "${SC_INPUT_FILES}"
     set -eo pipefail
 }
 
