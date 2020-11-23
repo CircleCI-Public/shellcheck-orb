@@ -1,4 +1,3 @@
-
 Set_SHELLCHECK_EXCLUDE_PARAM() {
     if [ -n "$SC_PARAM_EXCLUDE" ]; then
         SHELLCHECK_EXCLUDE_PARAM="--exclude=$SC_PARAM_EXCLUDE "
@@ -34,7 +33,7 @@ Check_for_shellcheck() {
 Run_ShellCheck() {
     SC_PARAM_PATTERN="${SC_PARAM_PATTERN:-"*.sh"}"
     SC_INPUT_FILES=/tmp/sc-input-files
-    find "$SC_PARAM_DIR" ! -name "$(printf "*\n*")" -name "$SC_PARAM_PATTERN" > "${SC_INPUT_FILES}"
+    find "$SC_PARAM_DIR" ! -name "$(printf "*\n*")" -name "$SC_PARAM_PATTERN" | tee "${SC_INPUT_FILES}"
     set +e
     while IFS= read -r script
     do
