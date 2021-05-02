@@ -1,6 +1,6 @@
 Set_SHELLCHECK_EXCLUDE_PARAM() {
     if [ -n "$SC_PARAM_EXCLUDE" ]; then
-        SHELLCHECK_EXCLUDE_PARAM="--exclude=$SC_PARAM_EXCLUDE "
+        SHELLCHECK_EXCLUDE_PARAM="--exclude=$SC_PARAM_EXCLUDE"
     else
         SHELLCHECK_EXCLUDE_PARAM=""
     fi
@@ -16,7 +16,7 @@ Set_SHELLCHECK_EXTERNAL_SOURCES_PARAM() {
 
 Set_SHELLCHECK_SHELL_PARAM() {
     if [ -n "$SC_PARAM_SHELL" ]; then
-        SHELLCHECK_SHELL_PARAM="--shell=$SC_PARAM_SHELL "
+        SHELLCHECK_SHELL_PARAM="--shell=$SC_PARAM_SHELL"
     else
         SHELLCHECK_SHELL_PARAM=""
     fi
