@@ -66,13 +66,13 @@ workflows:
       - orb-tools/publish-dev:
           orb-name: circleci/shellcheck
           requires: [ hold-for-dev-publish ]
-          context: orb-publishing
+          context: orb-publisher
 
       - orb-tools/trigger-integration-tests-workflow:
           name: trigger-integration-dev
           requires:
             - orb-tools/publish-dev
-          context: orb-publishing
+          context: orb-publisher
 
   integration-tests_prod-release:
     when: << pipeline.parameters.run-integration-tests >>
@@ -90,10 +90,10 @@ workflows:
 
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: circleci/shellcheck
-          context: orb-publishing
+          context: orb-publisher
           add-pr-comment: true
           bot-token-variable: GHI_TOKEN
-          bot-user: cpe-bot
+          bot-user: orb-publisher
           fail-if-semver-not-indicated: true
           publish-version-tag: true
           ssh-fingerprints: 40:21:b7:d7:fe:ea:dd:80:ca:c8:34:7a:37:b4:b4:d2
