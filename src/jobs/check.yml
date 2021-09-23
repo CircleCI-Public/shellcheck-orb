@@ -24,7 +24,7 @@ parameters:
     default: "."
   ignore_dirs:
     description: |
-      Specifiy directories to be ignored during shellcheck. Each directory provided should be quoted. 
+      Specifiy directories to be ignored during shellcheck. Each directory provided should be quoted.
       The directory will be recursively searched.
     type: string
     default: "."
