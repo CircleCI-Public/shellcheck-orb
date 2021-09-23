@@ -22,6 +22,12 @@ parameters:
       Specify the root path containing the shell scripts. The directory will be recursively searched.
     type: string
     default: "."
+  ignore_dirs:
+    description: |
+      Specifiy directories to be ignored during shellcheck. Each directory provided should be quoted. 
+      The directory will be recursively searched.
+    type: string
+    default: "."
   severity:
     description: >
       Specify minimum severity of errors to consider. Valid values in order of severity are error, warning, info and style.
@@ -62,6 +68,7 @@ steps:
       exclude: <<parameters.exclude>>
       external_sources: <<parameters.external_sources>>
       dir: <<parameters.dir>>
+      ignore_dirs: <<parameters.ignore_dirs>>
       severity: <<parameters.severity>>
       format: <<parameters.format>>
       output: <<parameters.output>>

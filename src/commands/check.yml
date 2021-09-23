@@ -18,8 +18,9 @@ parameters:
     type: string
     default: "."
   ignore_dirs:
-    description: >
+    description: |
       Specifiy directories to be ignored during shellcheck. Each directory provided should be quoted.
+      The directory will be recursively searched.
     type: string
     default: "./.git"
   severity:
