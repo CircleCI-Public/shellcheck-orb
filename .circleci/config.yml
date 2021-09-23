@@ -22,7 +22,7 @@ executors:
       - image: alpine
   mac:
     macos:
-      xcode: "11.6.0"
+      xcode: 12.5.1
 
 jobs:
   integration-test_full:
