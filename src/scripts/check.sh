@@ -31,7 +31,7 @@ Check_for_shellcheck() {
 }
 
 Run_ShellCheck() {
-    for dir in $(echo "${SC_IGNORE_PATHS}" | tr '"' "\n") 
+    for dir in $(echo "${SC_PARAM_IGNORE_DIRS}" | tr '"' "\n") 
     do
       set -- "$@" "!" "-path" "${dir}/*.sh"
     done
