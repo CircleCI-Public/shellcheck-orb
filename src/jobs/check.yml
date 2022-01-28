@@ -42,7 +42,7 @@ parameters:
       as a job artifact
   version:
     type: string
-    default: "v0.7.1"
+    default: "v0.8.0"
     description: |
       Override the Docker tag for this image. Find available tags here: https://hub.docker.com/r/koalaman/shellcheck/tags
       If a custom execution environment is needed, use the "install" command in a custom job.

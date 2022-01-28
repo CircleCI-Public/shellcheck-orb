@@ -56,16 +56,9 @@ workflows:
             - shellcheck/install
           path: src/tests
 
-      - hold-for-dev-publish:
-          type: approval
-          requires:
-            - orb-tools/lint
-            - orb-tools/pack
-            - bats/run
-
       - orb-tools/publish-dev:
           orb-name: circleci/shellcheck
-          requires: [ hold-for-dev-publish ]
+          requires: [ orb-tools/lint, orb-tools/pack, bats/run ]
           context: orb-publisher
 
       - orb-tools/trigger-integration-tests-workflow:
