@@ -4,7 +4,7 @@ description: |
   in your repository using the official Koalaman Shellcheck Docker image.
 
 docker:
-  - image: koalaman/shellcheck-alpine:<<parameters.version>>
+  - image: cimg/base:<<parameters.image-tag>>
 
 parameters:
   exclude:
@@ -40,12 +40,13 @@ parameters:
     description: |
       The filename of the shellcheck output, which is automatically saved
       as a job artifact
-  version:
+  image-tag:
     type: string
-    default: "v0.7.1"
+    default: "stable"
     description: |
-      Override the Docker tag for this image. Find available tags here: https://hub.docker.com/r/koalaman/shellcheck/tags
-      If a custom execution environment is needed, use the "install" command in a custom job.
+      Shellcheck is included in the CircleCI authored `cimg/base` docker image, installed via the official Ubuntu packages.
+      By default the most current stable release of this image will be used, but you may statically set the image tag with this parameter.
+      https://circleci.com/developer/images/image/cimg/base
   shell:
     type: string
     default: ""
