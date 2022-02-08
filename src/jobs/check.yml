@@ -42,9 +42,9 @@ parameters:
       as a job artifact
   image-tag:
     type: string
-    default: "stable"
+    default: "current"
     description: |
-      Shellcheck is included in the CircleCI authored `cimg/base` docker image, installed via the official Ubuntu packages.
+      Shellcheck is included in the CircleCI authored `cimg/base` docker image (Feb 2022 onward), installed via the official Ubuntu packages.
       By default the most current stable release of this image will be used, but you may statically set the image tag with this parameter.
       https://circleci.com/developer/images/image/cimg/base
   shell:
