@@ -68,7 +68,7 @@ steps:
       exclude: <<parameters.exclude>>
       external_sources: <<parameters.external_sources>>
       dir: <<parameters.dir>>
-      ignore_dirs: <<parameters.ignore-dir>>
+      ignore_dirs: <<parameters.ignore-dirs>>
       severity: <<parameters.severity>>
       format: <<parameters.format>>
       output: <<parameters.output>>

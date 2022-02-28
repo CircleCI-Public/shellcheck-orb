@@ -62,6 +62,7 @@ steps:
         SC_PARAM_OUTPUT: <<parameters.output>>
         SC_PARAM_SHELL: <<parameters.shell>>
         SC_PARAM_PATTERN: <<parameters.pattern>>
+        SC_PARAM_IGNORE_DIRS: <<parameters.ignore-dirs>>
       command: << include(scripts/check.sh) >>
 
   - store_artifacts:
