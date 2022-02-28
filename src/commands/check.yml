@@ -19,7 +19,7 @@ parameters:
     default: "."
   ignore_dirs:
     description: |
-      Specify directories to be ignored during shellcheck. Format value as JSON array. 
+      Specify directories to be ignored during shellcheck. Format value as JSON array.
       The directory will be recursively searched.
     type: string
     default: '["./.git"]'
