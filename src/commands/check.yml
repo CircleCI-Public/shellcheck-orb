@@ -16,7 +16,7 @@ parameters:
     description: >
       Specify the root path containing the shell scripts. The directory will be recursively searched.
     type: string
-    default: "."  
+    default: "."
   ignore_dirs:
     description: |
       Specify directories to be ignored during shellcheck. Format value as JSON array. 
