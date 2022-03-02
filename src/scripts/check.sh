@@ -31,6 +31,7 @@ Check_for_shellcheck() {
 }
 
 Run_ShellCheck() {
+    set -x
     for encoded in $(echo "${SC_PARAM_IGNORE_DIRS}" | jq -r '.[] | @base64'); do
         decoded=$(echo "${encoded}" | base64 -d)
         if [ -e "${decoded}" ]; then
