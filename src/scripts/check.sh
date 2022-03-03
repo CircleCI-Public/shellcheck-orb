@@ -24,7 +24,7 @@ Check_For_ShellCheck() {
     fi
 }
 
-Prep_ShellCheck() {
+ShellCheck_Files() {
     set -- # clear positional parameters
     for encoded in $(echo "${SC_PARAM_IGNORE_DIRS}" | jq -r '.[] | @base64'); do
         decoded=$(echo "${encoded}" | base64 -d)
@@ -56,7 +56,7 @@ Catch_SC_Errors() {
 
 SC_Main() {
     Check_For_ShellCheck
-    Prep_ShellCheck
+    ShellCheck_Files
     Catch_SC_Errors
     rm /tmp/sc-input-files
 }
