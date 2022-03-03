@@ -56,7 +56,7 @@ teardown() {
 # Esure errors can be excluded
 @test "5: Shellcheck test - Ignore directory list" {
     export SC_PARAM_DIR="src/tests/test_data"
-    export SC_IGNORE_DIRS='["src/tests/test_data/ignore_path"]'
+    export SC_PARAM_IGNORE_DIRS='["src/tests/test_data/ignore_path"]'
     export SC_PARAM_SEVERITY="style"
     export SC_PARAM_EXCLUDE="SC2006,SC2116,SC2034"
     export SC_PARAM_FORMAT="tty"
