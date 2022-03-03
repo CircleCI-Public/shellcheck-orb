@@ -1,6 +1,7 @@
 Run_ShellCheck() {
+    input="$1"
     set --
-    
+
     if [ -n "$SC_PARAM_EXCLUDE" ]; then
         set -- "$@" "--exclude=$SC_PARAM_EXCLUDE"
     fi
@@ -13,7 +14,7 @@ Run_ShellCheck() {
         set -- "$@" "--shell=$SC_PARAM_SHELL"
     fi
     
-    shellcheck "$@" --severity="$SC_PARAM_SEVERITY" --format="$SC_PARAM_FORMAT" "$1" >> "$SC_PARAM_OUTPUT"
+    shellcheck "$@" --severity="$SC_PARAM_SEVERITY" --format="$SC_PARAM_FORMAT" "$input" >> "$SC_PARAM_OUTPUT"
 }
 
 Check_For_ShellCheck() {
@@ -25,7 +26,6 @@ Check_For_ShellCheck() {
 }
 
 ShellCheck_Files() {
-    set -- # clear positional parameters
     for encoded in $(echo "${SC_PARAM_IGNORE_DIRS}" | jq -r '.[] | @base64'); do
         decoded=$(echo "${encoded}" | base64 -d)
         if [ -e "${decoded}" ]; then
@@ -60,7 +60,6 @@ SC_Main() {
     Catch_SC_Errors
     rm /tmp/sc-input-files
 }
-
 
 # Will not run if sourced for bats.
 # View src/tests for more information.
