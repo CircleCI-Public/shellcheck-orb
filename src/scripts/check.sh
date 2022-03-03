@@ -1,28 +1,22 @@
-Set_SHELLCHECK_EXCLUDE_PARAM() {
+Run_ShellCheck() {
+    set --
+    
     if [ -n "$SC_PARAM_EXCLUDE" ]; then
-        SHELLCHECK_EXCLUDE_PARAM="--exclude=$SC_PARAM_EXCLUDE"
-    else
-        SHELLCHECK_EXCLUDE_PARAM=""
+        set -- "$@" "--exclude=$SC_PARAM_EXCLUDE"
     fi
-}
-
-Set_SHELLCHECK_EXTERNAL_SOURCES_PARAM() {
+    
     if [ "$SC_PARAM_EXTERNAL_SOURCES" == "1" ]; then
-        SHELLCHECK_EXTERNAL_SOURCES="--external-sources"
-    else
-        SHELLCHECK_EXTERNAL_SOURCES=""
+        set -- "$@" "--external-sources"
     fi
-}
-
-Set_SHELLCHECK_SHELL_PARAM() {
+    
     if [ -n "$SC_PARAM_SHELL" ]; then
-        SHELLCHECK_SHELL_PARAM="--shell=$SC_PARAM_SHELL"
-    else
-        SHELLCHECK_SHELL_PARAM=""
+        set -- "$@" "--shell=$SC_PARAM_SHELL"
     fi
+    
+    shellcheck "$@" --severity="$SC_PARAM_SEVERITY" --format="$SC_PARAM_FORMAT" "$1" >> "$SC_PARAM_OUTPUT"
 }
 
-Check_for_shellcheck() {
+Check_For_ShellCheck() {
     if ! command -v shellcheck &> /dev/null
     then
         echo "Shellcheck not installed"
@@ -30,8 +24,8 @@ Check_for_shellcheck() {
     fi
 }
 
-Run_ShellCheck() {
-    set -x
+Prep_ShellCheck() {
+    set -- # clear positional parameters
     for encoded in $(echo "${SC_PARAM_IGNORE_DIRS}" | jq -r '.[] | @base64'); do
         decoded=$(echo "${encoded}" | base64 -d)
         if [ -e "${decoded}" ]; then
@@ -45,7 +39,7 @@ Run_ShellCheck() {
     set +e
     while IFS= read -r script
     do
-        shellcheck "$SHELLCHECK_EXCLUDE_PARAM" "$SHELLCHECK_EXTERNAL_SOURCES" "$SHELLCHECK_SHELL_PARAM" --severity="$SC_PARAM_SEVERITY" --format="$SC_PARAM_FORMAT" "$script" >> "$SC_PARAM_OUTPUT"
+        Run_ShellCheck "$script"
     done < "${SC_INPUT_FILES}"
     set -eo pipefail
 }
@@ -61,11 +55,8 @@ Catch_SC_Errors() {
 }
 
 SC_Main() {
-    Check_for_shellcheck
-    Set_SHELLCHECK_EXCLUDE_PARAM
-    Set_SHELLCHECK_EXTERNAL_SOURCES_PARAM
-    Set_SHELLCHECK_SHELL_PARAM
-    Run_ShellCheck
+    Check_For_ShellCheck
+    Prep_ShellCheck
     Catch_SC_Errors
     rm /tmp/sc-input-files
 }
