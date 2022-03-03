@@ -52,3 +52,16 @@ teardown() {
     run Catch_SC_Errors
     [ "$status" == 0 ]
 }
+
+# Esure errors can be excluded
+@test "5: Shellcheck test - Ignore directory list" {
+    export SC_PARAM_DIR="src/tests/test_data"
+    export SC_IGNORE_DIRS='["src/tests/test_data/ignore_path"]'
+    export SC_PARAM_SEVERITY="style"
+    export SC_PARAM_EXCLUDE="SC2006,SC2116,SC2034"
+    export SC_PARAM_FORMAT="tty"
+    ShellCheck_Files
+
+    # Test that 1 script was found in test_data
+    [ $(wc -l /tmp/sc-input-files | awk '{print $1}') == 1 ]
+}
