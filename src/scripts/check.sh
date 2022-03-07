@@ -28,8 +28,10 @@ Check_For_ShellCheck() {
 ShellCheck_Files() {
     while IFS=$'\n' read -r file
     do
-        if [ -e "${file}" ]; then
-            set -- "$@" "!" "-path" "${file}/*.sh"
+        trimmed=$(echo "${file}" | awk '{$1=$1};1')
+
+        if [ -e "${trimmed}" ]; then
+            set -- "$@" "!" "-path" "${trimmed}/*.sh"
         fi
     done <<< "${SC_PARAM_IGNORE_DIRS}"
     
