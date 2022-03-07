@@ -1,7 +1,7 @@
 Run_ShellCheck() {
     input="$1"
     set --
-
+    
     if [ -n "$SC_PARAM_EXCLUDE" ]; then
         set -- "$@" "--exclude=$SC_PARAM_EXCLUDE"
     fi
@@ -26,14 +26,14 @@ Check_For_ShellCheck() {
 }
 
 ShellCheck_Files() {
-    while IFS=$'\n' read -r file
-    do
+    IFS=$'\n'
+    for file in ${SC_PARAM_IGNORE_DIRS}; do
         trimmed=$(echo "${file}" | awk '{$1=$1};1')
-
+        
         if [ -e "${trimmed}" ]; then
             set -- "$@" "!" "-path" "${trimmed}/*.sh"
         fi
-    done <<< "${SC_PARAM_IGNORE_DIRS}"
+    done
     
     SC_PARAM_PATTERN="${SC_PARAM_PATTERN:-"*.sh"}"
     SC_INPUT_FILES=/tmp/sc-input-files
