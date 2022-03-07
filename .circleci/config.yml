@@ -19,7 +19,7 @@ executors:
       - image: cimg/base:edge
   alpine:
     docker:
-      - image: cibuilds/base
+      - image: alpine
   mac:
     macos:
       xcode: "12.5.1"

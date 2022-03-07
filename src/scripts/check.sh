@@ -26,12 +26,12 @@ Check_For_ShellCheck() {
 }
 
 ShellCheck_Files() {
-    for encoded in $(echo "${SC_PARAM_IGNORE_DIRS}" | jq -r '.[] | @base64'); do
-        decoded=$(echo "${encoded}" | base64 -d)
-        if [ -e "${decoded}" ]; then
-            set -- "$@" "!" "-path" "${decoded}/*.sh"
+    while IFS=$'\n' read -r file
+    do
+        if [ -e "${file}" ]; then
+            set -- "$@" "!" "-path" "${file}/*.sh"
         fi
-    done
+    done <<< "${SC_PARAM_IGNORE_DIRS}"
     
     SC_PARAM_PATTERN="${SC_PARAM_PATTERN:-"*.sh"}"
     SC_INPUT_FILES=/tmp/sc-input-files

@@ -19,10 +19,9 @@ parameters:
     default: "."
   ignore-dirs:
     description: |
-      Specify directories to be ignored during shellcheck. Format value as JSON array.
-      The directory will be recursively searched. jq is required for this feature.
+      Specify directories to be ignored during shellcheck. Separate paths by with new line.
     type: string
-    default: '["./.git"]'
+    default: './.git'
   severity:
     description: >
       Specify minimum severity of errors to consider. Valid values in order of severity are error, warning, info and style.

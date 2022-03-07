@@ -1,0 +1,1 @@
+echo "this file should not be included in shellcheck"
