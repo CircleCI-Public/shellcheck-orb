@@ -43,8 +43,8 @@ jobs:
       - shellcheck/check:
           exclude: SC2148,SC2038,SC2086
           ignore-dirs: |
-            src/tests/test_data/ignore_path_1
-            src/tests/test_data/ignore_path_2
+            ./src/tests/test_data/ignore_path_1
+            ./src/tests/test_data/ignore_path_2
           dir: ./src/tests/test_data
 
 workflows:
