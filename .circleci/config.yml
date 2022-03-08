@@ -45,7 +45,7 @@ jobs:
           ignore-dirs: |
             ./src/tests/ignore_test/ignore_path_1
             ./src/tests/ignore_test/ignore_path_2
-          dir: ./src/tests/test_data
+          dir: ./src/tests/ignore_test
 
 workflows:
   # This `lint-pack_validate_publish-dev` workflow will run on any commit.
