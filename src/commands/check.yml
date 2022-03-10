@@ -17,6 +17,11 @@ parameters:
       Specify the root path containing the shell scripts. The directory will be recursively searched.
     type: string
     default: "."
+  ignore-dirs:
+    description: |
+      Specify directories to be ignored during shellcheck. Separate paths by with new line.
+    type: string
+    default: './.git'
   severity:
     description: >
       Specify minimum severity of errors to consider. Valid values in order of severity are error, warning, info and style.
@@ -56,6 +61,7 @@ steps:
         SC_PARAM_OUTPUT: <<parameters.output>>
         SC_PARAM_SHELL: <<parameters.shell>>
         SC_PARAM_PATTERN: <<parameters.pattern>>
+        SC_PARAM_IGNORE_DIRS: <<parameters.ignore-dirs>>
       command: << include(scripts/check.sh) >>
 
   - store_artifacts:

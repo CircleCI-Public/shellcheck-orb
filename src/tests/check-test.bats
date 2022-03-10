@@ -2,7 +2,7 @@ setup() {
     source ./src/scripts/check.sh
     export SC_PARAM_OUTPUT="/tmp/shellcheck.log"
     export SC_PARAM_SHELL="bash"
-    Check_for_shellcheck
+    Check_For_ShellCheck
 }
 
 teardown() {
@@ -15,8 +15,7 @@ teardown() {
     export SC_PARAM_DIR="src/scripts"
     export SC_PARAM_SEVERITY="style"
     export SC_PARAM_EXCLUDE="SC2148,SC2038,SC2059"
-    Set_SHELLCHECK_EXCLUDE_PARAM
-    Run_ShellCheck
+    ShellCheck_Files
     # Test that 2 scripts were found
     [ $(wc -l /tmp/sc-input-files | awk '{print $1}') == 2 ]
 }
@@ -27,9 +26,8 @@ teardown() {
     export SC_PARAM_SEVERITY="style"
     export SC_PARAM_EXCLUDE="SC2148,SC2038,SC2059"
     export SC_PARAM_FORMAT="tty"
-    Set_SHELLCHECK_EXCLUDE_PARAM
     SC_PARAM_PATTERN="*.fake"
-    Run_ShellCheck
+    ShellCheck_Files
     # Test that 1 fake script was found
     [ $(wc -l /tmp/sc-input-files | awk '{print $1}') == 1 ]
 }
@@ -39,20 +37,32 @@ teardown() {
     export SC_PARAM_DIR="src/tests/test_data"
     export SC_PARAM_SEVERITY="style"
     export SC_PARAM_FORMAT="tty"
-    Set_SHELLCHECK_EXCLUDE_PARAM
-    Run_ShellCheck
+    ShellCheck_Files
     run Catch_SC_Errors
     [ "$status" == 1 ]
 }
 
 # Esure errors can be excluded
-@test "4: Shellcheck test - Supress errors" {
+@test "4: Shellcheck test - Suppress errors" {
     export SC_PARAM_DIR="src/tests/test_data"
     export SC_PARAM_SEVERITY="style"
     export SC_PARAM_EXCLUDE="SC2006,SC2116,SC2034"
     export SC_PARAM_FORMAT="tty"
-    Set_SHELLCHECK_EXCLUDE_PARAM
-    Run_ShellCheck
+    ShellCheck_Files
     run Catch_SC_Errors
     [ "$status" == 0 ]
+}
+
+# Esure errors can be excluded
+@test "5: Shellcheck test - Ignore directory list" {
+    export SC_PARAM_DIR="src/tests/test_data"
+    export SC_PARAM_IGNORE_DIRS="src/tests/ignore_test/ignore_path_1
+    src/tests/ignore_test/ignore_path_2"
+    export SC_PARAM_SEVERITY="style"
+    export SC_PARAM_EXCLUDE="SC2006,SC2116,SC2034"
+    export SC_PARAM_FORMAT="tty"
+    ShellCheck_Files
+
+    # Test that 1 script was found in test_data
+    [ $(wc -l /tmp/sc-input-files | awk '{print $1}') == 1 ]
 }

@@ -22,7 +22,7 @@ executors:
       - image: alpine
   mac:
     macos:
-      xcode: "11.6.0"
+      xcode: "12.5.1"
 
 jobs:
   integration-test_full:
@@ -40,6 +40,12 @@ jobs:
       - shellcheck/check:
           exclude: SC2148,SC2038,SC2086
           dir: ./src/scripts
+      - shellcheck/check:
+          exclude: SC2148,SC2038,SC2086
+          ignore-dirs: |
+            ./src/tests/ignore_test/ignore_path_1
+            ./src/tests/ignore_test/ignore_path_2
+          dir: ./src/tests/ignore_test
 
 workflows:
   # This `lint-pack_validate_publish-dev` workflow will run on any commit.
@@ -56,16 +62,11 @@ workflows:
             - shellcheck/install
           path: src/tests
 
-      - hold-for-dev-publish:
-          type: approval
-          requires:
-            - orb-tools/lint
-            - orb-tools/pack
-            - bats/run
-
       - orb-tools/publish-dev:
           orb-name: circleci/shellcheck
-          requires: [ hold-for-dev-publish ]
+          requires:
+            - bats/run
+            - orb-tools/pack
           context: orb-publisher
 
       - orb-tools/trigger-integration-tests-workflow:

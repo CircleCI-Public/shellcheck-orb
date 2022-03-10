@@ -22,6 +22,11 @@ parameters:
       Specify the root path containing the shell scripts. The directory will be recursively searched.
     type: string
     default: "."
+  ignore-dirs:
+    description: |
+      Specify directories to be ignored during shellcheck. Separate paths by with new line.
+    type: string
+    default: './.git'
   severity:
     description: >
       Specify minimum severity of errors to consider. Valid values in order of severity are error, warning, info and style.
@@ -56,16 +61,15 @@ parameters:
     default: ""
     description: The file pattern to search for. By default will search for "*.sh"
 
-
 steps:
   - checkout
   - check:
       exclude: <<parameters.exclude>>
       external_sources: <<parameters.external_sources>>
       dir: <<parameters.dir>>
+      ignore-dirs: <<parameters.ignore-dirs>>
       severity: <<parameters.severity>>
       format: <<parameters.format>>
       output: <<parameters.output>>
       shell: <<parameters.shell>>
       pattern: <<parameters.pattern>>
-
