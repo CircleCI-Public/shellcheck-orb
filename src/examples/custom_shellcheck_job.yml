@@ -21,7 +21,5 @@ usage:
   workflows:
     my_workflow:
       jobs:
-        - shellcheck/check:
-            dir: ./myScripts
-            exclude: "SC2148"
+        - my_job
 
