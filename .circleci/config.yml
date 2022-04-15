@@ -1,106 +1,36 @@
 version: 2.1
-
+setup: true
 orbs:
-  orb-tools: circleci/orb-tools@10.0
-  bats: circleci/bats@1.0
-  shellcheck: circleci/shellcheck@<<pipeline.parameters.dev-orb-version>>
+  orb-tools: circleci/orb-tools@11.1
+  shellcheck: circleci/shellcheck@3.1
 
-parameters:
-  run-integration-tests:
-    type: boolean
-    default: false
-  dev-orb-version:
-    type: string
-    default: "dev:alpha"
-
-executors:
-  debian:
-    docker:
-      - image: cimg/base:edge
-  alpine:
-    docker:
-      - image: alpine
-  mac:
-    macos:
-      xcode: "12.5.1"
-
-jobs:
-  integration-test_full:
-    parameters:
-      env:
-        type: executor
-        default: debian
-    executor: <<parameters.env>>
-    steps:
-      - checkout
-      - shellcheck/install
-      - run:
-          name: Verify Shellcheck install
-          command: shellcheck -V
-      - shellcheck/check:
-          exclude: SC2148,SC2038,SC2086
-          dir: ./src/scripts
-      - shellcheck/check:
-          exclude: SC2148,SC2038,SC2086
-          ignore-dirs: |
-            ./src/tests/ignore_test/ignore_path_1
-            ./src/tests/ignore_test/ignore_path_2
-          dir: ./src/tests/ignore_test
+filters: &filters
+  tags:
+    only: /.*/
 
 workflows:
-  # This `lint-pack_validate_publish-dev` workflow will run on any commit.
-  lint_pack-validate_publish-dev:
-    unless: << pipeline.parameters.run-integration-tests >>
+  lint-pack:
     jobs:
-      - orb-tools/lint
+      - orb-tools/lint:
+          filters: *filters
       - orb-tools/pack:
-          requires:
-            - orb-tools/lint
-
-      - bats/run:
-          setup-steps:
-            - shellcheck/install
-          path: src/tests
-
-      - orb-tools/publish-dev:
-          orb-name: circleci/shellcheck
-          requires:
-            - bats/run
-            - orb-tools/pack
-          context: orb-publisher
-
-      - orb-tools/trigger-integration-tests-workflow:
-          name: trigger-integration-dev
-          requires:
-            - orb-tools/publish-dev
-          context: orb-publisher
-
-  integration-tests_prod-release:
-    when: << pipeline.parameters.run-integration-tests >>
-    jobs:
+          filters: *filters
+      - orb-tools/review:
+          filters: *filters
       - shellcheck/check:
-          exclude: SC2148,SC2038,SC2086
-          dir: ./src/scripts
-      - integration-test_full:
-          matrix:
-            parameters:
-              env:
-                - debian
-                - mac
-                - alpine
-
-      - orb-tools/dev-promote-prod-from-commit-subject:
+          exclude: SC2148,SC2038,SC2086,SC2002,SC2016
+          filters: *filters
+      - orb-tools/publish:
           orb-name: circleci/shellcheck
-          context: orb-publisher
-          add-pr-comment: true
-          bot-token-variable: GHI_TOKEN
-          bot-user: orb-publisher
-          fail-if-semver-not-indicated: true
-          publish-version-tag: true
-          ssh-fingerprints: 40:21:b7:d7:fe:ea:dd:80:ca:c8:34:7a:37:b4:b4:d2
+          vcs-type: << pipeline.project.type >>
           requires:
-            - shellcheck/check
-            - integration-test_full
-          filters:
-            branches:
-              only: master
+            [orb-tools/lint, orb-tools/review, orb-tools/pack, shellcheck/check]
+          # Use a context to hold your publishing token.
+          context: orb-publisher
+          filters: *filters
+      # Triggers the next workflow in the Orb Development Kit.
+      - orb-tools/continue:
+          pipeline-number: << pipeline.number >>
+          vcs-type: << pipeline.project.type >>
+          requires: [orb-tools/publish]
+          filters: *filters
