@@ -1,0 +1,61 @@
+version: 2.1
+orbs:
+  shellcheck: circleci/shellcheck@dev:<<pipeline.git.revision>>
+  orb-tools: circleci/orb-tools@11.1
+filters: &filters
+  tags:
+    only: /.*/
+jobs:
+  integration-test_full:
+    parameters:
+      env:
+        type: executor
+        default: debian
+    executor: <<parameters.env>>
+    steps:
+      - checkout
+      - shellcheck/install
+      - run:
+          name: Verify Shellcheck install
+          command: shellcheck -V
+      - shellcheck/check:
+          exclude: SC2148,SC2038,SC2086
+          dir: ./src/scripts
+workflows:
+  test-deploy:
+    jobs:
+      # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
+      - integration-test_full:
+          matrix:
+            parameters:
+              env:
+                - debian
+                - mac
+                - alpine
+          filters: *filters
+      - orb-tools/pack:
+          filters: *filters
+      - orb-tools/publish:
+          orb-name: circleci/shellcheck
+          vcs-type: << pipeline.project.type >>
+          pub-type: production
+          requires:
+            - orb-tools/pack
+            - integration-test_full
+          context: orb-publisher
+          github-token: GHI_TOKEN
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
+executors:
+  debian:
+    docker:
+      - image: cimg/base:edge
+  alpine:
+    docker:
+      - image: alpine
+  mac:
+    macos:
+      xcode: "11.6.0"
