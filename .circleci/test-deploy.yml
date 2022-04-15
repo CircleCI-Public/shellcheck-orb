@@ -21,6 +21,10 @@ jobs:
       - shellcheck/check:
           exclude: SC2148,SC2038,SC2086
           dir: ./src/scripts
+          ignore-dirs: |
+            ./.git
+            ./src/tests/test_data
+
 workflows:
   test-deploy:
     jobs:
