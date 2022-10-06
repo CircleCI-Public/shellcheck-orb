@@ -58,4 +58,4 @@ executors:
       - image: alpine
   mac:
     macos:
-      xcode: "11.6.0"
+      xcode: "13.4.1"
