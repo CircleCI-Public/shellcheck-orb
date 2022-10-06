@@ -1,3 +1,4 @@
+#!/bin/bash
 Run_ShellCheck() {
     input="$1"
     set --
@@ -21,7 +22,7 @@ Check_For_ShellCheck() {
     if ! command -v shellcheck &> /dev/null
     then
         echo "Shellcheck not installed"
-        exit 1
+        exit 
     fi
 }
 
@@ -66,6 +67,6 @@ SC_Main() {
 # Will not run if sourced for bats.
 # View src/tests for more information.
 TEST_ENV="bats-core"
-if [ "${0#*$TEST_ENV}" == "$0" ]; then
+if [ "${0#*"$TEST_ENV"}" == "$0" ]; then
     SC_Main
 fi
