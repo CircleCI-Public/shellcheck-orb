@@ -1,3 +1,4 @@
+#!/bin/bash
 if echo "$OSTYPE "| grep darwin > /dev/null 2>&1; then
     if [[ $EUID == 0 ]]; then export SUDO=""; else # Check if we're root
         export SUDO="sudo";
