@@ -22,7 +22,7 @@ Check_For_ShellCheck() {
     if ! command -v shellcheck &> /dev/null
     then
         echo "Shellcheck not installed"
-        exit 
+        exit 1
     fi
 }
 
