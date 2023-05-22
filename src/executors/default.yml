@@ -13,15 +13,7 @@ parameters:
         type: enum
         default: large
         description: Configure the executor resource class
-        enum:
-            - small
-            - medium
-            - medium+
-            - large
-            - xlarge
-            - 2xlarge
-            - 2xlarge+
-
+        enum: ["small", "medium", "medium+", "large", "xlarge", "2xlarge", "2xlarge+"]
 docker:
     - image: cimg/base:<<parameters.image-tag>>
 resource_class: << parameters.resource_class >>
