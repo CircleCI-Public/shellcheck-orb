@@ -3,8 +3,10 @@ description: |
   Add this job to any workflow to automatically check any shell scripts
   in your repository using the official Koalaman Shellcheck Docker image.
 
-docker:
-  - image: cimg/base:<<parameters.image-tag>>
+executor:
+    name: default
+    image-tag: << parameters.image-tag >>
+    resource_class: << parameters.resource_class >>
 
 parameters:
   exclude:
@@ -45,13 +47,6 @@ parameters:
     description: |
       The filename of the shellcheck output, which is automatically saved
       as a job artifact
-  image-tag:
-    type: string
-    default: "current"
-    description: |
-      Shellcheck is included in the CircleCI authored `cimg/base` docker image (Feb 2022 onward), installed via the official Ubuntu packages.
-      By default the most current stable release of this image will be used, but you may statically set the image tag with this parameter.
-      https://circleci.com/developer/images/image/cimg/base
   shell:
     type: string
     default: ""
@@ -60,6 +55,18 @@ parameters:
     type: string
     default: ""
     description: The file pattern to search for. By default will search for "*.sh"
+  image-tag:
+    type: string
+    default: "current"
+    description: |
+        Shellcheck is included in the CircleCI authored `cimg/base` docker image (Feb 2022 onward), installed via the official Ubuntu packages.
+        By default the most current stable release of this image will be used, but you may statically set the image tag with this parameter.
+        https://circleci.com/developer/images/image/cimg/base
+  resource_class:
+    type: enum
+    default: large
+    description: Configure the executor resource class
+    enum: ["small", "medium", "medium+", "large", "xlarge", "2xlarge", "2xlarge+"]
 
 steps:
   - checkout
