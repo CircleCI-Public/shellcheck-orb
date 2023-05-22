@@ -33,6 +33,10 @@ workflows:
                 - mac
                 - alpine
           filters: *filters
+      - shellcheck/check:
+          resource_class: small
+          exclude: SC2148,SC2038,SC2086
+          dir: ./src/scripts
       - orb-tools/pack:
           filters: *filters
       - orb-tools/publish:
@@ -42,6 +46,7 @@ workflows:
           requires:
             - orb-tools/pack
             - integration-test_full
+            - shellcheck/check
           context: orb-publisher
           github-token: GHI_TOKEN
           filters:
