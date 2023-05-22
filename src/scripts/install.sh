@@ -15,7 +15,7 @@ fi
 if grep Alpine /etc/issue > /dev/null 2>&1; then
     apk add shellcheck
     echo "Alpine"
-    exit $?
+    exit
 fi
 
 if  grep Debian /etc/issue > /dev/null 2>&1 || grep Ubuntu /etc/issue > /dev/null 2>&1; then
