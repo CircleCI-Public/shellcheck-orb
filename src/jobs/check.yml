@@ -6,6 +6,8 @@ description: |
 docker:
   - image: cimg/base:<<parameters.image-tag>>
 
+circleci_ip_ranges: << parameters.circleci_ip_ranges >>
+
 parameters:
   exclude:
     description: >
@@ -60,6 +62,11 @@ parameters:
     type: string
     default: ""
     description: The file pattern to search for. By default will search for "*.sh"
+  circleci_ip_ranges:
+    type: boolean
+    default: false
+    description: |
+      The IP ranges feature enables users to restrict network access to CircleCI jobs by allowing only requests originating from specified IP ranges. For detailed documentation on "circleci_ip_ranges", you can refer to the official CircleCI documentation: [IP Ranges](https://circleci.com/docs/ip-ranges/)
 
 steps:
   - checkout
