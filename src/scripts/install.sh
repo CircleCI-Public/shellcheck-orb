@@ -29,17 +29,17 @@ install_arch() {
 }
 
 # Platform check
-if uname -a | grep "Darwin"; then
+if uname -a | grep -q "Darwin"; then
     install_mac
-elif uname -a | grep "x86_64 GNU/Linux"; then
+elif uname -a | grep -q "x86_64 GNU/Linux"; then
     install_linux
-elif uname -a | grep "aarch64 GNU/Linux"; then
+elif uname -a | grep -q "aarch64 GNU/Linux"; then
     install_arm64
-elif uname -a | grep "x86_64 Msys"; then
+elif uname -a | grep -q "x86_64 Msys"; then
     install_windows
-elif grep "Alpine" /etc/issue >/dev/null 2>&1; then
+elif grep -q "Alpine" /etc/issue; then
     install_alpine
-elif grep Arch /etc/issue >/dev/null 2>&1; then
+elif grep -q Arch /etc/issue; then
     install_arch
 else
     echo "This platform appears to be unsupported."
