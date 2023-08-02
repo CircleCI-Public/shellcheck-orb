@@ -1,42 +1,48 @@
 #!/bin/bash
-if echo "$OSTYPE "| grep darwin > /dev/null 2>&1; then
-    if [[ $EUID == 0 ]]; then export SUDO=""; else # Check if we're root
-        export SUDO="sudo";
-    fi
-    # shellcheck disable=SC2086
-    SC_DOWNLOAD_MAC="https://github.com/koalaman/shellcheck/releases/download/v${SC_INSTALL_VERSION}/shellcheck-v${SC_INSTALL_VERSION}.darwin.x86_64.tar.xz"
-    curl -LJO "$SC_DOWNLOAD_MAC"
+if [[ $EUID == 0 ]]; then export SUDO=""; else # Check if we're root
+    export SUDO="sudo"
+fi
+
+install_mac() {
+    curl -LJO "https://github.com/koalaman/shellcheck/releases/download/v${SC_INSTALL_VERSION}/shellcheck-v${SC_INSTALL_VERSION}.darwin.x86_64.tar.xz"
     tar -xvf "shellcheck-v$SC_INSTALL_VERSION.darwin.x86_64.tar.xz"
     cd "shellcheck-v$SC_INSTALL_VERSION/" || false
     $SUDO cp shellcheck /usr/local/bin
-    exit $?
-fi
-
-if grep Alpine /etc/issue > /dev/null 2>&1; then
-    apk add shellcheck
-    echo "Alpine"
-    exit $?
-fi
-
-if  grep Debian /etc/issue > /dev/null 2>&1 || grep Ubuntu /etc/issue > /dev/null 2>&1; then
-    if [[ $EUID == 0 ]]; then export SUDO=""; else # Check if we're root
-        export SUDO="sudo";
-    fi
-    # shellcheck disable=SC2086
+}
+install_linux() {
     wget -qO- "https://github.com/koalaman/shellcheck/releases/download/v${SC_INSTALL_VERSION}/shellcheck-v${SC_INSTALL_VERSION}.linux.x86_64.tar.xz" | tar -xJf -
     cd "shellcheck-v$SC_INSTALL_VERSION/" || false
     $SUDO cp shellcheck /usr/local/bin
-    exit $?
-fi
-
-if grep Arch /etc/issue > /dev/null 2>&1; then
-    if [[ $EUID == 0 ]]; then export SUDO=""; else # Check if we're root
-        export SUDO="sudo";
-    fi
-    # shellcheck disable=SC2086
+}
+install_arm64() {
+    wget -qO- "https://github.com/koalaman/shellcheck/releases/download/v${SC_INSTALL_VERSION}/shellcheck-v${SC_INSTALL_VERSION}.linux.armv6hf.tar.xz" | tar -xJf -
+    cd "shellcheck-v$SC_INSTALL_VERSION/" || false
+    $SUDO cp shellcheck /usr/local/bin
+}
+install_alpine() {
+    apk add shellcheck
+}
+install_arch() {
     wget -qO- "https://github.com/koalaman/shellcheck/releases/download/v${SC_INSTALL_VERSION}/shellcheck-v${SC_INSTALL_VERSION}.linux.aarch64.tar.xz" | tar -xJf -
     cd "shellcheck-v$SC_INSTALL_VERSION/" || false
     $SUDO cp shellcheck /usr/local/bin
-    exit $?
-fi
+}
 
+# Platform check
+if uname -a | grep -q "Darwin"; then
+    install_mac
+elif uname -a | grep -q "x86_64 GNU/Linux"; then
+    install_linux
+elif uname -a | grep -q "aarch64 GNU/Linux"; then
+    install_arm64
+elif uname -a | grep -q "x86_64 Msys"; then
+    install_windows
+elif grep -q "Alpine" /etc/issue; then
+    install_alpine
+elif grep -q Arch /etc/issue; then
+    install_arch
+else
+    echo "This platform appears to be unsupported."
+    uname -a
+    exit 1
+fi

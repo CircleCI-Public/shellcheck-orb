@@ -32,6 +32,7 @@ workflows:
                 - debian
                 - mac
                 - alpine
+                - arm
           filters: *filters
       - orb-tools/pack:
           filters: *filters
@@ -59,3 +60,7 @@ executors:
   mac:
     macos:
       xcode: "13.4.1"
+  arm:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: arm.medium
