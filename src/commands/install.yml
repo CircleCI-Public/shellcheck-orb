@@ -4,7 +4,7 @@ description: >
 parameters:
   version:
     description: Select the tagged release version of Shellcheck to install.
-    default: "0.7.1"
+    default: "0.9.0"
     type: string
 
 steps:
