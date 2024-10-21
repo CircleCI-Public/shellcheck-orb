@@ -4,7 +4,7 @@ description: |
   in your repository using the official Koalaman Shellcheck Docker image.
 
 docker:
-  - image: cimg/base:<<parameters.image-tag>>
+  - image: <<parameters.image-name>>:<<parameters.image-tag>>
 
 parameters:
   exclude:
@@ -45,6 +45,13 @@ parameters:
     description: |
       The filename of the shellcheck output, which is automatically saved
       as a job artifact
+  image-name:
+    type: string
+    default: "cimg/base"
+    description: |
+      Shellcheck is included in the CircleCI authored `cimg/base` docker image (Feb 2022 onward), installed via the official Ubuntu packages.
+      By default, "cimg/base" is used as the image, but you may specify a different base image with this parameter.
+      https://circleci.com/developer/images/image/cimg/base
   image-tag:
     type: string
     default: "current"
