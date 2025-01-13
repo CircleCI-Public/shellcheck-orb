@@ -4,8 +4,8 @@ if [[ $EUID == 0 ]]; then export SUDO=""; else # Check if we're root
 fi
 
 install_mac() {
-    curl -LJO "https://github.com/koalaman/shellcheck/releases/download/v${SC_INSTALL_VERSION}/shellcheck-v${SC_INSTALL_VERSION}.aarch64.tar.xz"
-    tar -xvf "shellcheck-v$SC_INSTALL_VERSION.aarch64.tar.xz"
+    curl -LJO "https://github.com/koalaman/shellcheck/releases/download/v${SC_INSTALL_VERSION}/shellcheck-v${SC_INSTALL_VERSION}.darwin.aarch64.tar.xz"
+    tar -xvf "shellcheck-v$SC_INSTALL_VERSION.darwin.aarch64.tar.xz"
     cd "shellcheck-v$SC_INSTALL_VERSION/" || false
     $SUDO cp shellcheck /usr/local/bin
 }
