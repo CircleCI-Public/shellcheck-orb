@@ -22,4 +22,3 @@ usage:
     my_workflow:
       jobs:
         - my_job
-

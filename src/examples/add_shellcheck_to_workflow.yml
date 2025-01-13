@@ -13,4 +13,3 @@ usage:
         - shellcheck/check:
             dir: ./myScripts
             exclude: "SC2148"
-
