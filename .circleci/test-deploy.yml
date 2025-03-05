@@ -60,6 +60,7 @@ executors:
   mac:
     macos:
       xcode: "13.4.1"
+      shell: bash --login -eox pipefail 
   arm:
     machine:
       image: ubuntu-2204:current
