@@ -3,8 +3,10 @@ description: >
 
 parameters:
   version:
-    description: Select the tagged release version of Shellcheck to install.
-    default: "0.7.1"
+    description: |
+      Select the tagged release version of Shellcheck to install.
+      Mac with ARM arquitecture is only supported since version 0.10.0
+    default: "0.10.0"
     type: string
 
 steps:

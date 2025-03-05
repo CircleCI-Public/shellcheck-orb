@@ -6,6 +6,8 @@ description: |
 docker:
   - image: <<parameters.image-name>>:<<parameters.image-tag>>
 
+resource_class: << parameters.resource_class >>
+
 parameters:
   exclude:
     description: >
@@ -59,6 +61,11 @@ parameters:
       Shellcheck is included in the CircleCI authored `cimg/base` docker image (Feb 2022 onward), installed via the official Ubuntu packages.
       By default the most current stable release of this image will be used, but you may statically set the image tag with this parameter.
       https://circleci.com/developer/images/image/cimg/base
+  resource_class:
+    description: Configure the executor resource class
+    type: enum
+    enum: ["small", "medium", "medium+", "large", "xlarge", "2xlarge", "2xlarge+", "arm.medium", "arm.large", "arm.xlarge", "arm.2xlarge"]
+    default: "small"
   shell:
     type: string
     default: ""
@@ -67,6 +74,12 @@ parameters:
     type: string
     default: ""
     description: The file pattern to search for. By default will search for "*.sh"
+  circleci_ip_ranges:
+    description: Enables jobs to go through a set of well-defined IP address ranges.
+    type: boolean
+    default: false
+
+circleci_ip_ranges: << parameters.circleci_ip_ranges >>
 
 steps:
   - checkout
