@@ -57,8 +57,8 @@ parameters:
   resource_class:
     description: Configure the executor resource class
     type: enum
-    enum: ["small", "medium", "medium+", "large", "xlarge", "2xlarge", "2xlarge+"]
-    default: "medium"
+    enum: ["small", "medium", "medium+", "large", "xlarge", "2xlarge", "2xlarge+", "arm.medium", "arm.large", "arm.xlarge", "arm.2xlarge"]
+    default: "small"
   shell:
     type: string
     default: ""
