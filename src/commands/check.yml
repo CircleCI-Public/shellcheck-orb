@@ -20,6 +20,7 @@ parameters:
   ignore-dirs:
     description: |
       Specify directories to be ignored during shellcheck. Separate paths by with new line.
+      Do not add slash (/) at the end of the directory.
     type: string
     default: './.git'
   severity:
