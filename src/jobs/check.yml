@@ -19,6 +19,10 @@ parameters:
       Follow source statements even when the file is not specified as input.
     type: boolean
     default: false
+  executor: 
+    description: The executor to use for this job. By default, this will use the "default" executor provided by this orb.
+    type: executor
+    default: default
   dir:
     description: >
       Specify the root path containing the shell scripts. The directory will be recursively searched.
@@ -48,25 +52,6 @@ parameters:
     description: |
       The filename of the shellcheck output, which is automatically saved
       as a job artifact
-  image-name:
-    type: string
-    default: "cimg/base"
-    description: |
-      Shellcheck is included in the CircleCI authored `cimg/base` docker image (Feb 2022 onward), installed via the official Ubuntu packages.
-      By default, "cimg/base" is used as the image, but you may specify a different base image with this parameter.
-      https://circleci.com/developer/images/image/cimg/base
-  image-tag:
-    type: string
-    default: "current"
-    description: |
-      Shellcheck is included in the CircleCI authored `cimg/base` docker image (Feb 2022 onward), installed via the official Ubuntu packages.
-      By default the most current stable release of this image will be used, but you may statically set the image tag with this parameter.
-      https://circleci.com/developer/images/image/cimg/base
-  resource_class:
-    description: Configure the executor resource class
-    type: enum
-    enum: ["small", "medium", "medium+", "large", "xlarge", "2xlarge", "2xlarge+", "arm.medium", "arm.large", "arm.xlarge", "arm.2xlarge"]
-    default: "small"
   shell:
     type: string
     default: ""
@@ -79,6 +64,8 @@ parameters:
     description: Enables jobs to go through a set of well-defined IP address ranges.
     type: boolean
     default: false
+
+executor: << parameters.executor >>
 
 circleci_ip_ranges: << parameters.circleci_ip_ranges >>
 
