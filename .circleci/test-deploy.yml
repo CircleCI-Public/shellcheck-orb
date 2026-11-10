@@ -34,6 +34,12 @@ workflows:
                 - alpine
                 - arm
           filters: *filters
+      - shellcheck/check:
+          name: shellcheck-check-gen2
+          resource_class: small.gen2
+          exclude: SC2148,SC2038,SC2086
+          dir: ./src/scripts
+          filters: *filters
       - orb-tools/pack:
           filters: *filters
       - orb-tools/publish:

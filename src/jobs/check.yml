@@ -63,9 +63,8 @@ parameters:
       By default the most current stable release of this image will be used, but you may statically set the image tag with this parameter.
       https://circleci.com/developer/images/image/cimg/base
   resource_class:
-    description: Configure the executor resource class
-    type: enum
-    enum: ["small", "medium", "medium+", "large", "xlarge", "2xlarge", "2xlarge+", "arm.medium", "arm.large", "arm.xlarge", "arm.2xlarge"]
+    description: CircleCI executor resource class (including gen2 classes such as small.gen2).
+    type: string
     default: "small"
   shell:
     type: string
