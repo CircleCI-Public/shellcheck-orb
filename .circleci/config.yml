@@ -16,6 +16,8 @@ workflows:
       - orb-tools/pack:
           filters: *filters
       - orb-tools/review:
+          # RC010: pre-existing kebab-case params (ignore-dirs, image-name, image-tag)
+          exclude: RC010
           filters: *filters
       - shellcheck/check:
           exclude: SC2148,SC2038,SC2086,SC2002,SC2016
