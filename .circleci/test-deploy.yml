@@ -65,7 +65,7 @@ executors:
       - image: alpine
   mac:
     macos:
-      xcode: "13.4.1"
+      xcode: "26.6.0"
       shell: bash --login -eox pipefail
   arm:
     machine:
